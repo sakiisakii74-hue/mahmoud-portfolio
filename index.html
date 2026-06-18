@@ -1,0 +1,752 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>محمود مصطفى خميس رمضان – أخصائي مساحة & GIS</title>
+<meta name="description" content="أخصائي مساحة ونظم معلومات جغرافية بخبرة +10 سنوات – FTTH – AutoCAD – GIS – الرياض">
+<link href="https://fonts.googleapis.com/css2?family=Cairo:wght@300;400;600;700;900&display=swap" rel="stylesheet">
+<style>
+:root{
+  --ink:#0f1c1e; --sand:#f5f0e8; --teal:#1a6b6b; --teal-mid:#2a9090;
+  --gold:#c8a84b; --mist:#e8f0ef; --white:#ffffff; --body:#2d3f3f; --danger:#c0392b;
+}
+*{margin:0;padding:0;box-sizing:border-box;}
+body{font-family:'Cairo',sans-serif;background:var(--sand);color:var(--body);line-height:1.7;}
+
+/* ── NAV ── */
+nav{position:sticky;top:0;z-index:200;background:rgba(15,28,30,.96);backdrop-filter:blur(10px);
+  display:flex;align-items:center;justify-content:space-between;padding:0 32px;height:56px;}
+.nav-logo{color:var(--gold);font-weight:900;font-size:1rem;}
+.nav-links{display:flex;gap:6px;}
+.nav-links a{color:rgba(255,255,255,.7);text-decoration:none;font-size:.82rem;font-weight:600;
+  padding:6px 14px;border-radius:4px;transition:all .18s;}
+.nav-links a:hover{color:var(--white);background:rgba(255,255,255,.1);}
+
+/* ── HERO ── */
+.hero{background:var(--ink);color:var(--white);padding:90px 40px 70px;position:relative;overflow:hidden;text-align:center;}
+.hero::before{content:'';position:absolute;inset:0;pointer-events:none;
+  background:radial-gradient(ellipse 60% 80% at 80% 50%,rgba(26,107,107,.35) 0%,transparent 70%),
+             radial-gradient(ellipse 40% 60% at 20% 80%,rgba(200,168,75,.15) 0%,transparent 60%);}
+.hero::after{content:'';position:absolute;inset:0;pointer-events:none;
+  background-image:repeating-linear-gradient(0deg,rgba(255,255,255,.03) 0,rgba(255,255,255,.03) 1px,transparent 1px,transparent 40px),
+                   repeating-linear-gradient(90deg,rgba(255,255,255,.03) 0,rgba(255,255,255,.03) 1px,transparent 1px,transparent 40px);}
+.hero-inner{position:relative;z-index:1;max-width:860px;margin:auto;}
+.hero-badge{display:inline-block;border:1px solid var(--gold);color:var(--gold);font-size:11px;letter-spacing:2px;padding:5px 16px;border-radius:2px;margin-bottom:22px;}
+.hero h1{font-size:clamp(2.2rem,5vw,3.6rem);font-weight:900;line-height:1.15;margin-bottom:14px;}
+.hero h1 span{color:var(--gold);}
+.hero-subtitle{font-size:1.05rem;font-weight:300;color:rgba(255,255,255,.75);margin-bottom:16px;max-width:600px;margin-inline:auto;}
+.hero-years{display:inline-flex;align-items:center;gap:24px;background:rgba(255,255,255,.06);border:1px solid rgba(255,255,255,.12);
+  border-radius:6px;padding:12px 28px;margin-bottom:32px;flex-wrap:wrap;justify-content:center;}
+.hero-stat{text-align:center;}
+.hero-stat .num{display:block;font-size:1.8rem;font-weight:900;color:var(--gold);line-height:1;}
+.hero-stat .lbl{font-size:.72rem;color:rgba(255,255,255,.55);font-weight:600;letter-spacing:.5px;}
+.hero-sep{width:1px;height:36px;background:rgba(255,255,255,.15);}
+.hero-contacts{display:flex;flex-wrap:wrap;gap:10px;justify-content:center;margin-bottom:28px;}
+.hero-contacts a{display:flex;align-items:center;gap:7px;background:rgba(255,255,255,.08);border:1px solid rgba(255,255,255,.15);
+  color:rgba(255,255,255,.85);padding:8px 18px;border-radius:4px;text-decoration:none;font-size:.85rem;transition:all .2s;}
+.hero-contacts a:hover{background:rgba(26,107,107,.4);border-color:var(--teal-mid);}
+.hero-contacts svg{width:14px;height:14px;fill:var(--gold);flex-shrink:0;}
+.avail-badge{display:inline-flex;align-items:center;gap:8px;background:rgba(39,174,96,.15);border:1px solid rgba(39,174,96,.4);
+  color:#27ae60;padding:6px 16px;border-radius:20px;font-size:.8rem;font-weight:700;margin-bottom:20px;}
+.avail-dot{width:8px;height:8px;background:#27ae60;border-radius:50%;animation:pulse 1.5s infinite;}
+@keyframes pulse{0%,100%{opacity:1;transform:scale(1);}50%{opacity:.5;transform:scale(1.3);}}
+
+/* ── PAGE / SECTION ── */
+.page{max-width:1100px;margin:auto;padding:0 24px;}
+.section{padding:64px 0 48px;}
+.section-label{display:flex;align-items:center;gap:14px;margin-bottom:36px;}
+.section-label .bar{width:4px;height:32px;background:linear-gradient(180deg,var(--teal),var(--gold));border-radius:2px;flex-shrink:0;}
+.section-label h2{font-size:1.5rem;font-weight:700;color:var(--ink);}
+.divider{border:none;border-top:1px solid rgba(0,0,0,.07);}
+
+/* ── STATS ── */
+.stats-row{display:grid;grid-template-columns:repeat(auto-fit,minmax(160px,1fr));gap:16px;}
+.stat-card{background:var(--white);border-radius:8px;padding:22px;text-align:center;
+  box-shadow:0 2px 12px rgba(0,0,0,.05);border-bottom:3px solid var(--teal);transition:transform .15s;}
+.stat-card:hover{transform:translateY(-3px);}
+.stat-card .s-num{font-size:2rem;font-weight:900;color:var(--teal);line-height:1;margin-bottom:4px;}
+.stat-card .s-lbl{font-size:.8rem;color:#888;font-weight:600;}
+
+/* ── SUMMARY ── */
+.summary-card{background:var(--white);border-radius:8px;padding:36px 40px;border-right:4px solid var(--teal);box-shadow:0 2px 16px rgba(0,0,0,.06);}
+.summary-card p{font-size:1.02rem;line-height:1.85;}
+
+/* ── CV DOWNLOAD ── */
+.cv-dl-hero{display:inline-flex;align-items:center;gap:10px;background:var(--gold);color:var(--ink);
+  padding:14px 32px;border-radius:6px;font-family:'Cairo',sans-serif;font-size:1rem;font-weight:900;
+  text-decoration:none;border:none;cursor:pointer;box-shadow:0 4px 20px rgba(200,168,75,.4);transition:all .2s;margin-top:4px;}
+.cv-dl-hero:hover{background:#d4b55a;transform:translateY(-2px);}
+.cv-dl-hero svg{width:20px;height:20px;}
+.cv-dl-nav{background:var(--gold);color:var(--ink)!important;padding:6px 18px!important;
+  border-radius:4px;font-weight:700!important;}
+
+/* ── PROJECTS ── */
+.projects-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(300px,1fr));gap:20px;}
+.project-card{background:var(--white);border-radius:10px;overflow:hidden;box-shadow:0 2px 12px rgba(0,0,0,.06);transition:transform .2s,box-shadow .2s;}
+.project-card:hover{transform:translateY(-4px);box-shadow:0 8px 28px rgba(0,0,0,.12);}
+.project-header{padding:20px 22px 16px;border-bottom:1px solid var(--mist);}
+.project-tag{display:inline-block;background:var(--mist);color:var(--teal);font-size:.72rem;font-weight:700;letter-spacing:.5px;padding:3px 10px;border-radius:3px;margin-bottom:10px;}
+.project-card h4{font-size:.98rem;font-weight:700;color:var(--ink);margin-bottom:4px;}
+.project-card .proj-loc{font-size:.8rem;color:#888;}
+.project-body{padding:16px 22px;}
+.project-body p{font-size:.87rem;line-height:1.65;color:var(--body);}
+
+/* ── TIMELINE ── */
+.timeline{display:flex;flex-direction:column;}
+.tl-item{display:grid;grid-template-columns:160px 1fr;gap:0 28px;}
+.tl-time{text-align:left;padding-top:4px;padding-left:8px;border-left:2px solid var(--mist);position:relative;font-size:.8rem;color:var(--teal);font-weight:600;line-height:1.4;}
+.tl-time::before{content:'';position:absolute;right:-6px;top:6px;width:10px;height:10px;border-radius:50%;background:var(--teal);border:2px solid var(--white);box-shadow:0 0 0 2px var(--teal);}
+.tl-body{background:var(--white);border-radius:8px;padding:24px 28px;margin-bottom:24px;box-shadow:0 2px 12px rgba(0,0,0,.05);}
+.tl-company{font-size:1rem;font-weight:700;color:var(--teal);margin-bottom:4px;}
+.tl-role{font-size:.8rem;color:var(--gold);font-weight:600;text-transform:uppercase;letter-spacing:1px;margin-bottom:14px;}
+.tl-body ul{list-style:none;padding:0;}
+.tl-body ul li{padding:5px 0 5px 18px;position:relative;font-size:.91rem;color:#3a4a4a;border-bottom:1px solid #f0f4f4;}
+.tl-body ul li:last-child{border-bottom:none;}
+.tl-body ul li::before{content:'◈';position:absolute;left:0;color:var(--teal-mid);font-size:.7rem;top:8px;}
+
+/* ── SKILLS ── */
+.skills-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(200px,1fr));gap:12px;}
+.skill-chip{background:var(--white);border-radius:6px;padding:12px 16px;display:flex;align-items:center;gap:10px;
+  box-shadow:0 1px 8px rgba(0,0,0,.05);transition:transform .15s,box-shadow .15s;}
+.skill-chip:hover{transform:translateY(-2px);box-shadow:0 4px 16px rgba(26,107,107,.12);}
+.skill-icon{font-size:1.2rem;}
+.skill-chip span{font-size:.88rem;font-weight:600;color:var(--ink);}
+.skill-bar-section{display:flex;flex-direction:column;gap:12px;}
+.skill-bar-label{display:flex;justify-content:space-between;font-size:.83rem;font-weight:600;margin-bottom:5px;}
+.skill-bar-track{height:8px;background:var(--mist);border-radius:4px;overflow:hidden;}
+.skill-bar-fill{height:100%;border-radius:4px;background:linear-gradient(90deg,var(--teal),var(--teal-mid));}
+
+/* ── SOFTWARE – BIG CARDS ── */
+.sw-categories{display:grid;grid-template-columns:repeat(auto-fill,minmax(260px,1fr));gap:20px;margin-top:8px;}
+.sw-cat-card{background:var(--white);border-radius:10px;overflow:hidden;box-shadow:0 2px 14px rgba(0,0,0,.06);transition:transform .2s,box-shadow .2s;}
+.sw-cat-card:hover{transform:translateY(-3px);box-shadow:0 8px 24px rgba(0,0,0,.1);}
+.sw-cat-header{padding:14px 18px 12px;display:flex;align-items:center;gap:10px;}
+.sw-cat-header .cat-icon{font-size:1.5rem;}
+.sw-cat-header h4{font-size:.9rem;font-weight:700;color:var(--white);}
+.sw-cat-header small{font-size:.72rem;color:rgba(255,255,255,.65);display:block;margin-top:1px;}
+.sw-cat-body{padding:14px 18px 18px;display:flex;flex-direction:column;gap:8px;}
+.sw-tool{display:flex;align-items:center;justify-content:space-between;padding:8px 12px;background:var(--sand);border-radius:6px;}
+.sw-tool-name{font-size:.85rem;font-weight:700;color:var(--ink);}
+.sw-tool-desc{font-size:.75rem;color:#777;margin-top:1px;}
+.sw-level{display:flex;gap:3px;}
+.sw-dot{width:9px;height:9px;border-radius:50%;background:var(--mist);}
+.sw-dot.on{background:var(--teal);}
+
+/* ── GALLERY ── */
+.file-tabs{display:flex;gap:8px;margin-bottom:20px;flex-wrap:wrap;}
+.file-tab{padding:7px 16px;border-radius:20px;border:2px solid var(--mist);background:var(--white);
+  font-family:'Cairo',sans-serif;font-size:.83rem;font-weight:600;color:var(--body);cursor:pointer;transition:all .18s;}
+.file-tab.active{background:var(--teal);color:var(--white);border-color:var(--teal);}
+.file-tab:hover:not(.active){border-color:var(--teal-mid);color:var(--teal);}
+
+.gallery-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(280px,1fr));gap:20px;}
+
+/* Image card with hover overlay */
+.gallery-card{background:var(--white);border-radius:10px;overflow:hidden;
+  box-shadow:0 2px 14px rgba(0,0,0,.07);transition:transform .22s,box-shadow .22s;position:relative;}
+.gallery-card:hover{transform:translateY(-5px);box-shadow:0 12px 36px rgba(0,0,0,.14);}
+.img-wrapper{position:relative;overflow:hidden;}
+.gallery-img{width:100%;height:220px;object-fit:cover;display:block;transition:transform .35s;}
+.gallery-card:hover .gallery-img{transform:scale(1.05);}
+.img-overlay{position:absolute;inset:0;background:linear-gradient(180deg,transparent 40%,rgba(0,0,0,.75) 100%);
+  opacity:0;transition:opacity .3s;display:flex;flex-direction:column;justify-content:flex-end;padding:16px;}
+.gallery-card:hover .img-overlay{opacity:1;}
+.overlay-caption{color:var(--white);font-size:.88rem;font-weight:600;}
+.overlay-zoom{position:absolute;top:12px;right:12px;background:rgba(255,255,255,.2);backdrop-filter:blur(4px);
+  border:1px solid rgba(255,255,255,.35);border-radius:50%;width:36px;height:36px;
+  display:flex;align-items:center;justify-content:center;cursor:pointer;color:white;font-size:1rem;}
+/* file card */
+.file-preview{width:100%;height:220px;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:10px;
+  background:linear-gradient(135deg,var(--mist) 0%,#d4e6e6 100%);text-decoration:none;transition:filter .15s;}
+.file-preview:hover{filter:brightness(.95);}
+.file-preview .ficon{font-size:3.2rem;line-height:1;}
+.file-preview .fext{background:var(--teal);color:white;font-size:.72rem;font-weight:700;letter-spacing:1px;padding:3px 12px;border-radius:3px;text-transform:uppercase;}
+.file-preview .fname{font-size:.78rem;color:var(--teal);font-weight:600;max-width:90%;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;text-align:center;}
+.fsize-badge{position:absolute;top:10px;left:10px;background:rgba(0,0,0,.5);color:white;font-size:.68rem;padding:2px 8px;border-radius:3px;}
+
+.files-stats{font-size:.78rem;color:#999;margin-bottom:14px;}
+
+
+/* ── LIGHTBOX ── */
+.lightbox{display:none;position:fixed;inset:0;background:rgba(0,0,0,.92);z-index:1000;
+  align-items:center;justify-content:center;flex-direction:column;gap:16px;}
+.lightbox.open{display:flex;}
+.lb-img-wrap{position:relative;max-width:92vw;}
+.lightbox img{max-width:92vw;max-height:82vh;border-radius:6px;display:block;box-shadow:0 20px 60px rgba(0,0,0,.6);}
+.lb-close{position:absolute;top:-40px;left:0;color:white;font-size:1.8rem;cursor:pointer;background:none;border:none;}
+.lb-caption{color:rgba(255,255,255,.8);font-size:.9rem;font-weight:600;max-width:600px;text-align:center;}
+.lb-nav{display:flex;gap:12px;}
+.lb-nav button{background:rgba(255,255,255,.15);border:1px solid rgba(255,255,255,.2);color:white;
+  padding:8px 20px;border-radius:4px;cursor:pointer;font-family:'Cairo',sans-serif;font-size:.85rem;transition:background .2s;}
+.lb-nav button:hover{background:rgba(255,255,255,.25);}
+
+/* ── CONTACT ── */
+.contact-cols{display:grid;grid-template-columns:1fr 1fr;gap:28px;}
+.contact-item{background:var(--white);border-radius:8px;padding:18px 22px;display:flex;align-items:center;gap:14px;box-shadow:0 2px 10px rgba(0,0,0,.05);margin-bottom:14px;}
+.contact-item svg{width:22px;height:22px;fill:var(--teal);flex-shrink:0;}
+.contact-item a{color:var(--body);text-decoration:none;font-size:.9rem;font-weight:600;}
+.contact-item a:hover{color:var(--teal);}
+.avail-box{background:linear-gradient(135deg,var(--teal),var(--teal-mid));border-radius:8px;padding:22px;color:white;}
+.avail-box h4{font-size:.9rem;font-weight:700;margin-bottom:10px;}
+.avail-box ul{list-style:none;font-size:.87rem;line-height:2.1;}
+
+/* ── EDU ── */
+.info-cards{display:grid;grid-template-columns:1fr 1fr;gap:20px;}
+.info-card{background:var(--white);border-radius:8px;padding:24px 28px;box-shadow:0 2px 12px rgba(0,0,0,.05);}
+.info-card h3{font-size:1rem;font-weight:700;color:var(--teal);margin-bottom:10px;}
+.info-card p,.info-card li{font-size:.9rem;color:var(--body);}
+.info-card ul{list-style:none;}
+.info-card ul li{padding:4px 0;}
+
+/* ── FOOTER ── */
+footer{background:var(--ink);color:rgba(255,255,255,.4);text-align:center;padding:30px;font-size:.82rem;margin-top:60px;}
+footer strong{color:var(--gold);}
+
+/* ── MOBILE ── */
+@media(max-width:700px){
+  .tl-item,.info-cards,.contact-cols{grid-template-columns:1fr;}
+  .tl-time{border-left:none;padding:0;margin-bottom:8px;}
+  .tl-time::before{display:none;}
+  .hero{padding:70px 20px 50px;}
+  .hero-sep{display:none;}
+  nav{padding:0 14px;}
+  .nav-links a{font-size:.72rem;padding:5px 9px;}
+}
+</style>
+</head>
+<body>
+
+<!-- NAV -->
+<nav>
+  <div class="nav-logo">م.م. خميس رمضان</div>
+  <div class="nav-links">
+    <a href="#about">عني</a>
+    <a href="#projects">مشاريع</a>
+    <a href="#experience">خبرات</a>
+    <a href="#skills">مهارات</a>
+    <a href="#portfolio">أعمالي</a>
+    <a href="#contact">تواصل</a>
+    <a href="MAHMOUD_MOUSTAFA.pdf" class="cv-dl-nav" download>⬇ CV</a>
+  </div>
+</nav>
+
+<!-- HERO -->
+<header class="hero">
+  <div class="hero-inner">
+    <div class="avail-badge"><span class="avail-dot"></span> متاح للعمل الآن</div>
+    <div class="hero-badge">أخصائي مساحة ونظم معلومات جغرافية أول</div>
+    <h1>محمود مصطفى <span>خميس رمضان</span></h1>
+    <p class="hero-subtitle">رفع مساحي · GIS · FTTH · خطوط الغاز · As-Built · BOQ</p>
+    <div class="hero-years">
+      <div class="hero-stat"><span class="num">+10</span><span class="lbl">سنوات خبرة</span></div>
+      <div class="hero-sep"></div>
+      <div class="hero-stat"><span class="num">3</span><span class="lbl">شركات كبرى</span></div>
+      <div class="hero-sep"></div>
+      <div class="hero-stat"><span class="num">+50</span><span class="lbl">مشروع منفّذ</span></div>
+      <div class="hero-sep"></div>
+      <div class="hero-stat"><span class="num">KSA</span><span class="lbl">الرياض</span></div>
+    </div>
+    <div class="hero-contacts">
+      <a href="tel:+966565627491">
+        <svg viewBox="0 0 24 24"><path d="M6.6 10.8c1.4 2.8 3.8 5.1 6.6 6.6l2.2-2.2c.3-.3.7-.4 1-.2 1.1.4 2.3.6 3.6.6.6 0 1 .4 1 1V20c0 .6-.4 1-1 1-9.4 0-17-7.6-17-17 0-.6.4-1 1-1h3.5c.6 0 1 .4 1 1 0 1.3.2 2.5.6 3.6.1.3 0 .7-.2 1L6.6 10.8z"/></svg>
+        +966 565627491
+      </a>
+      <a href="mailto:mahmoudmoustafakhmies@gmail.com">
+        <svg viewBox="0 0 24 24"><path d="M20 4H4c-1.1 0-2 .9-2 2v12c0 1.1.9 2 2 2h16c1.1 0 2-.9 2-2V6c0-1.1-.9-2-2-2zm0 4l-8 5-8-5V6l8 5 8-5v2z"/></svg>
+        mahmoudmoustafakhmies@gmail.com
+      </a>
+      <a href="#">
+        <svg viewBox="0 0 24 24"><path d="M12 2C8.13 2 5 5.13 5 9c0 5.25 7 13 7 13s7-7.75 7-13c0-3.87-3.13-7-7-7zm0 9.5c-1.38 0-2.5-1.12-2.5-2.5s1.12-2.5 2.5-2.5 2.5 1.12 2.5 2.5-1.12 2.5-2.5 2.5z"/></svg>
+        الرياض – الدار البيضاء
+      </a>
+    </div>
+    <a href="MAHMOUD_MOUSTAFA.pdf" class="cv-dl-hero" download>
+      <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M4 16v1a3 3 0 003 3h10a3 3 0 003-3v-1m-4-4l-4 4m0 0l-4-4m4 4V4"/></svg>
+      تحميل السيرة الذاتية
+    </a>
+  </div>
+</header>
+
+<div class="page">
+
+<!-- STATS -->
+<section class="section" id="about" style="padding-bottom:0;">
+  <div class="stats-row">
+    <div class="stat-card"><div class="s-num">+10</div><div class="s-lbl">سنوات خبرة ميدانية</div></div>
+    <div class="stat-card"><div class="s-num">+50</div><div class="s-lbl">مشروع مساحي منفّذ</div></div>
+    <div class="stat-card"><div class="s-num">5+</div><div class="s-lbl">محافظات مُسحت</div></div>
+    <div class="stat-card"><div class="s-num">FTTH</div><div class="s-lbl">ألياف ضوئية KSA</div></div>
+    <div class="stat-card"><div class="s-num">GIS</div><div class="s-lbl">نظم معلومات جغرافية</div></div>
+  </div>
+</section>
+
+<!-- SUMMARY -->
+<section class="section" style="padding-top:36px;">
+  <div class="section-label"><div class="bar"></div><h2>الملخص المهني</h2></div>
+  <div class="summary-card">
+    <p>أخصائي مساحة ونظم معلومات جغرافية بخبرة تتجاوز <strong>10 سنوات</strong> في أعمال الرفع المساحي، ونظم المعلومات الجغرافية (GIS)، ومشاريع البنية التحتية، وشبكات الألياف الضوئية (FTTH) في <strong>المملكة العربية السعودية</strong>، وخطوط الغاز الطبيعي في <strong>جمهورية مصر العربية</strong>. أمتلك خبرة واسعة في استخدام أجهزة الرفع المساحي (Total Station – GPS – LEVEL) وإعداد المخططات الهندسية الدقيقة، وحصر الكميات، وإعداد مخططات As-Built، ومتابعة الأعمال الميدانية والتنسيق مع المقاولين والاستشاريين حتى إتمام وتسليم المشاريع وفق <strong>أعلى معايير الجودة</strong>.</p>
+  </div>
+</section>
+<hr class="divider">
+
+<!-- PROJECTS -->
+<section class="section" id="projects">
+  <div class="section-label"><div class="bar"></div><h2>أبرز المشاريع المنفّذة</h2></div>
+  <div class="projects-grid">
+    <div class="project-card">
+      <div class="project-header">
+        <div class="project-tag">🔌 FTTH – ألياف ضوئية</div>
+        <h4>شبكة الألياف الضوئية – الرياض</h4>
+        <div class="proj-loc">📍 الرياض، المملكة العربية السعودية · 2024 – الآن</div>
+      </div>
+      <div class="project-body"><p>إعداد مخططات الحفر، حصر الكميات (BOQ)، متابعة الأعمال الميدانية – التنسيق الكامل مع المقاولين حتى التسليم النهائي.</p></div>
+    </div>
+    <div class="project-card">
+      <div class="project-header">
+        <div class="project-tag">🔥 خطوط الغاز الطبيعي</div>
+        <h4>مشروع الغاز – المناطق الصناعية سوهاج وقنا</h4>
+        <div class="proj-loc">📍 سوهاج – جرجا – طهطا – قفط · 2019 – 2023</div>
+      </div>
+      <div class="project-body"><p>رفع مساحي بـ GPS وتصميم مسارات خطوط الغاز الطبيعي للمناطق الصناعية بمحافظات متعددة في صعيد مصر.</p></div>
+    </div>
+    <div class="project-card">
+      <div class="project-header">
+        <div class="project-tag">🌍 GIS – حياة كريمة</div>
+        <h4>مشروع حياة كريمة – رفع قرى سوهاج وقنا</h4>
+        <div class="proj-loc">📍 سوهاج · قنا · الشرقية · العلمين · 2019 – 2023</div>
+      </div>
+      <div class="project-body"><p>الرفع المساحي الشامل لقرى عدة محافظات ضمن المبادرة الوطنية مع توقيع وتوثيق البيانات على منظومة GIS.</p></div>
+    </div>
+    <div class="project-card">
+      <div class="project-header">
+        <div class="project-tag">📮 GIS – البريد السعودي</div>
+        <h4>مشروع البريد السعودي – نظم معلومات جغرافية</h4>
+        <div class="proj-loc">📍 المملكة العربية السعودية · 2014 – 2019</div>
+      </div>
+      <div class="project-body"><p>العمل ضمن فريق GIS لمشروع البريد السعودي – رقمنة البيانات الجغرافية وإدخالها ضمن منظومة المعلومات الجغرافية.</p></div>
+    </div>
+    <div class="project-card">
+      <div class="project-header">
+        <div class="project-tag">🗺️ رفع مساحي</div>
+        <h4>رفع قرى الفيوم والبدرشين والإسكندرية</h4>
+        <div class="proj-loc">📍 الفيوم · البدرشين · الإسكندرية · 2014 – 2019</div>
+      </div>
+      <div class="project-body"><p>رفع مساحي ميداني شامل لمناطق متعددة باستخدام Total Station وGPS وإعداد المخططات الهندسية الدقيقة.</p></div>
+    </div>
+    <div class="project-card">
+      <div class="project-header">
+        <div class="project-tag">📐 As-Built</div>
+        <h4>مخططات As-Built – مشاريع FTTH</h4>
+        <div class="proj-loc">📍 الرياض · 2024 – الآن</div>
+      </div>
+      <div class="project-body"><p>إعداد مخططات As-Built النهائية لمشاريع الألياف الضوئية وتسليمها للاستشاريين وفق المواصفات المطلوبة.</p></div>
+    </div>
+  </div>
+</section>
+
+<hr class="divider">
+
+<!-- EXPERIENCE -->
+<section class="section" id="experience">
+  <div class="section-label"><div class="bar"></div><h2>التاريخ المهني</h2></div>
+  <div class="timeline">
+    <div class="tl-item">
+      <div class="tl-time">يناير 2024<br>– الآن</div>
+      <div class="tl-body">
+        <div class="tl-company">شركة الهاجدية للمقاولات المحدودة – الرياض</div>
+        <div class="tl-role">أخصائي مساحة ونظم معلومات جغرافية أول</div>
+        <ul>
+          <li>مسح منطقة العمل الميدانية قبل بداية التنفيذ</li>
+          <li>إدارة حصر الكميات (حفر / فايبر) وحصر المواد المستحقة للمقاول</li>
+          <li>تجهيز مخططات الحفر بـ Photoshop موضحًا كل الأمتار الميدانية</li>
+          <li>إعداد محاضر إنجاز الأعمال حتى المطالبة النهائية للمقاول</li>
+          <li>إعداد BOQ النهائي (حفر / فايبر) لتسليمه لضوئيات</li>
+          <li>التعديل على المخططات وتسليمها للاستشاري</li>
+          <li>تسليم الموقع من البداية حتى إنهاء جميع التقارير</li>
+        </ul>
+      </div>
+    </div>
+    <div class="tl-item">
+      <div class="tl-time">أغسطس 2019<br>– ديسمبر 2023</div>
+      <div class="tl-body">
+        <div class="tl-company">شركة مودرن جاس – مصر</div>
+        <div class="tl-role">أخصائي مساحة</div>
+        <ul>
+          <li>رفع مساحي لقرى سوهاج – قنا – الشرقية – العلمين – الحمام (مشروع حياة كريمة)</li>
+          <li>استخدام GPS في توقيع ورفع خطوط الغاز الطبيعي بالمناطق الصناعية</li>
+          <li>تصميم مسارات خطوط الغاز الطبيعي بالمناطق الصناعية بمحافظات متعددة</li>
+        </ul>
+      </div>
+    </div>
+    <div class="tl-item">
+      <div class="tl-time">فبراير 2014<br>– يوليو 2019</div>
+      <div class="tl-body">
+        <div class="tl-company">شركة باثفايندرز</div>
+        <div class="tl-role">أخصائي مساحة</div>
+        <ul>
+          <li>الرفع المساحي لقرى الفيوم – البدرشين – مناطق الإسكندرية</li>
+          <li>العمل في مشروع البريد السعودي في مجال GIS</li>
+          <li>إدخال وتوثيق البيانات الجغرافية</li>
+        </ul>
+      </div>
+    </div>
+  </div>
+</section>
+
+<hr class="divider">
+
+<!-- SKILLS + SOFTWARE -->
+<section class="section" id="skills">
+  <div class="section-label"><div class="bar"></div><h2>المهارات التقنية</h2></div>
+  <div style="display:grid;grid-template-columns:1fr 1fr;gap:40px;align-items:start;">
+    <div>
+      <div class="skills-grid">
+        <div class="skill-chip"><span class="skill-icon">📡</span><span>الرفع المساحي</span></div>
+        <div class="skill-chip"><span class="skill-icon">🗺️</span><span>المساحة الطبوغرافية</span></div>
+        <div class="skill-chip"><span class="skill-icon">🛰️</span><span>أجهزة GPS</span></div>
+        <div class="skill-chip"><span class="skill-icon">📐</span><span>Total Station</span></div>
+        <div class="skill-chip"><span class="skill-icon">🌍</span><span>نظم GIS</span></div>
+        <div class="skill-chip"><span class="skill-icon">📋</span><span>مخططات تنفيذية</span></div>
+        <div class="skill-chip"><span class="skill-icon">📊</span><span>حصر كميات BOQ</span></div>
+        <div class="skill-chip"><span class="skill-icon">🗂️</span><span>مخططات As-Built</span></div>
+        <div class="skill-chip"><span class="skill-icon">🔌</span><span>ألياف ضوئية FTTH</span></div>
+        <div class="skill-chip"><span class="skill-icon">🔧</span><span>مسارات الغاز الطبيعي</span></div>
+      </div>
+    </div>
+    <div class="skill-bar-section">
+      <p style="font-weight:700;color:var(--ink);margin-bottom:14px;">مستوى الكفاءة</p>
+      <div><div class="skill-bar-label"><span>الرفع المساحي & Total Station</span><span style="color:var(--teal)">95%</span></div><div class="skill-bar-track"><div class="skill-bar-fill" style="width:95%"></div></div></div>
+      <div><div class="skill-bar-label"><span>GPS & التوقيع الميداني</span><span style="color:var(--teal)">95%</span></div><div class="skill-bar-track"><div class="skill-bar-fill" style="width:95%"></div></div></div>
+      <div><div class="skill-bar-label"><span>AutoCAD & Civil 3D</span><span style="color:var(--teal)">90%</span></div><div class="skill-bar-track"><div class="skill-bar-fill" style="width:90%"></div></div></div>
+      <div><div class="skill-bar-label"><span>حصر الكميات & BOQ</span><span style="color:var(--teal)">92%</span></div><div class="skill-bar-track"><div class="skill-bar-fill" style="width:92%"></div></div></div>
+      <div><div class="skill-bar-label"><span>نظم المعلومات الجغرافية GIS</span><span style="color:var(--teal)">85%</span></div><div class="skill-bar-track"><div class="skill-bar-fill" style="width:85%"></div></div></div>
+      <div><div class="skill-bar-label"><span>FTTH – ألياف ضوئية</span><span style="color:var(--teal)">88%</span></div><div class="skill-bar-track"><div class="skill-bar-fill" style="width:88%"></div></div></div>
+      <div><div class="skill-bar-label"><span>Adobe Photoshop / Illustrator</span><span style="color:var(--teal)">80%</span></div><div class="skill-bar-track"><div class="skill-bar-fill" style="width:80%"></div></div></div>
+    </div>
+  </div>
+
+  <!-- SOFTWARE BIG CARDS -->
+  <div class="section-label" style="margin-top:48px;margin-bottom:20px;"><div class="bar"></div><h2>البرامج والأدوات – تفصيلي</h2></div>
+  <div class="sw-categories">
+
+    <!-- CAD -->
+    <div class="sw-cat-card">
+      <div class="sw-cat-header" style="background:linear-gradient(135deg,#1a5276,#2e86c1);">
+        <div class="cat-icon">📐</div>
+        <div><h4>رسم هندسي & تصميم</h4><small>CAD Tools</small></div>
+      </div>
+      <div class="sw-cat-body">
+        <div class="sw-tool">
+          <div><div class="sw-tool-name">AutoCAD</div><div class="sw-tool-desc">رسم المخططات التنفيذية والتصميم الهندسي</div></div>
+          <div class="sw-level"><div class="sw-dot on"></div><div class="sw-dot on"></div><div class="sw-dot on"></div><div class="sw-dot on"></div><div class="sw-dot on"></div></div>
+        </div>
+        <div class="sw-tool">
+          <div><div class="sw-tool-name">Civil 3D</div><div class="sw-tool-desc">تصميم البنية التحتية والطرق والشبكات</div></div>
+          <div class="sw-level"><div class="sw-dot on"></div><div class="sw-dot on"></div><div class="sw-dot on"></div><div class="sw-dot on"></div><div class="sw-dot"></div></div>
+        </div>
+      </div>
+    </div>
+
+    <!-- GIS -->
+    <div class="sw-cat-card">
+      <div class="sw-cat-header" style="background:linear-gradient(135deg,#145a32,#1e8449);">
+        <div class="cat-icon">🌍</div>
+        <div><h4>نظم المعلومات الجغرافية</h4><small>GIS Software</small></div>
+      </div>
+      <div class="sw-cat-body">
+        <div class="sw-tool">
+          <div><div class="sw-tool-name">ArcGIS</div><div class="sw-tool-desc">تحليل ومعالجة البيانات الجغرافية</div></div>
+          <div class="sw-level"><div class="sw-dot on"></div><div class="sw-dot on"></div><div class="sw-dot on"></div><div class="sw-dot on"></div><div class="sw-dot"></div></div>
+        </div>
+        <div class="sw-tool">
+          <div><div class="sw-tool-name">QGIS</div><div class="sw-tool-desc">معالجة البيانات الجغرافية المفتوحة</div></div>
+          <div class="sw-level"><div class="sw-dot on"></div><div class="sw-dot on"></div><div class="sw-dot on"></div><div class="sw-dot on"></div><div class="sw-dot"></div></div>
+        </div>
+        <div class="sw-tool">
+          <div><div class="sw-tool-name">Google Earth Pro</div><div class="sw-tool-desc">KMZ/KML – مراجعة وتحليل المواقع</div></div>
+          <div class="sw-level"><div class="sw-dot on"></div><div class="sw-dot on"></div><div class="sw-dot on"></div><div class="sw-dot on"></div><div class="sw-dot on"></div></div>
+        </div>
+      </div>
+    </div>
+
+    <!-- SURVEY DEVICES -->
+    <div class="sw-cat-card">
+      <div class="sw-cat-header" style="background:linear-gradient(135deg,#6e2f1a,#b7430f);">
+        <div class="cat-icon">🛰️</div>
+        <div><h4>أجهزة المساحة الميدانية</h4><small>Survey Equipment</small></div>
+      </div>
+      <div class="sw-cat-body">
+        <div class="sw-tool">
+          <div><div class="sw-tool-name">Total Station</div><div class="sw-tool-desc">ضبط ورفع النقاط بدقة عالية</div></div>
+          <div class="sw-level"><div class="sw-dot on"></div><div class="sw-dot on"></div><div class="sw-dot on"></div><div class="sw-dot on"></div><div class="sw-dot on"></div></div>
+        </div>
+        <div class="sw-tool">
+          <div><div class="sw-tool-name">GPS / GNSS</div><div class="sw-tool-desc">توقيع ورفع الإحداثيات الجغرافية</div></div>
+          <div class="sw-level"><div class="sw-dot on"></div><div class="sw-dot on"></div><div class="sw-dot on"></div><div class="sw-dot on"></div><div class="sw-dot on"></div></div>
+        </div>
+        <div class="sw-tool">
+          <div><div class="sw-tool-name">LEVEL (ميزانية)</div><div class="sw-tool-desc">قياس الفروق المنسوبية بدقة</div></div>
+          <div class="sw-level"><div class="sw-dot on"></div><div class="sw-dot on"></div><div class="sw-dot on"></div><div class="sw-dot on"></div><div class="sw-dot on"></div></div>
+        </div>
+      </div>
+    </div>
+
+    <!-- ADOBE -->
+    <div class="sw-cat-card">
+      <div class="sw-cat-header" style="background:linear-gradient(135deg,#4a235a,#8e44ad);">
+        <div class="cat-icon">🎨</div>
+        <div><h4>تصميم جرافيك & مخططات</h4><small>Adobe Creative</small></div>
+      </div>
+      <div class="sw-cat-body">
+        <div class="sw-tool">
+          <div><div class="sw-tool-name">Adobe Photoshop</div><div class="sw-tool-desc">تجهيز مخططات الحفر والتوضيحية</div></div>
+          <div class="sw-level"><div class="sw-dot on"></div><div class="sw-dot on"></div><div class="sw-dot on"></div><div class="sw-dot on"></div><div class="sw-dot"></div></div>
+        </div>
+        <div class="sw-tool">
+          <div><div class="sw-tool-name">Adobe Illustrator</div><div class="sw-tool-desc">تصميم المخططات الهندسية الاحترافية</div></div>
+          <div class="sw-level"><div class="sw-dot on"></div><div class="sw-dot on"></div><div class="sw-dot on"></div><div class="sw-dot"></div><div class="sw-dot"></div></div>
+        </div>
+      </div>
+    </div>
+
+    <!-- OFFICE -->
+    <div class="sw-cat-card">
+      <div class="sw-cat-header" style="background:linear-gradient(135deg,#1a5276,#117a65);">
+        <div class="cat-icon">📊</div>
+        <div><h4>إدارة البيانات والتقارير</h4><small>MS Office</small></div>
+      </div>
+      <div class="sw-cat-body">
+        <div class="sw-tool">
+          <div><div class="sw-tool-name">Microsoft Excel</div><div class="sw-tool-desc">BOQ – حصر الكميات – جداول التقارير</div></div>
+          <div class="sw-level"><div class="sw-dot on"></div><div class="sw-dot on"></div><div class="sw-dot on"></div><div class="sw-dot on"></div><div class="sw-dot"></div></div>
+        </div>
+        <div class="sw-tool">
+          <div><div class="sw-tool-name">Microsoft Word</div><div class="sw-tool-desc">إعداد التقارير ومحاضر الإنجاز</div></div>
+          <div class="sw-level"><div class="sw-dot on"></div><div class="sw-dot on"></div><div class="sw-dot on"></div><div class="sw-dot on"></div><div class="sw-dot"></div></div>
+        </div>
+      </div>
+    </div>
+
+    <!-- FILE FORMATS -->
+    <div class="sw-cat-card">
+      <div class="sw-cat-header" style="background:linear-gradient(135deg,#1a6b6b,#c8a84b);">
+        <div class="cat-icon">📁</div>
+        <div><h4>صيغ الملفات المتقنة</h4><small>File Formats</small></div>
+      </div>
+      <div class="sw-cat-body">
+        <div class="sw-tool"><div><div class="sw-tool-name">DWG / DXF</div><div class="sw-tool-desc">ملفات AutoCAD – تبادل المخططات</div></div><div class="sw-level"><div class="sw-dot on"></div><div class="sw-dot on"></div><div class="sw-dot on"></div><div class="sw-dot on"></div><div class="sw-dot on"></div></div></div>
+        <div class="sw-tool"><div><div class="sw-tool-name">KMZ / KML</div><div class="sw-tool-desc">ملفات GIS – Google Earth</div></div><div class="sw-level"><div class="sw-dot on"></div><div class="sw-dot on"></div><div class="sw-dot on"></div><div class="sw-dot on"></div><div class="sw-dot on"></div></div></div>
+        <div class="sw-tool"><div><div class="sw-tool-name">SHP / GeoJSON</div><div class="sw-tool-desc">ملفات ArcGIS / QGIS الجغرافية</div></div><div class="sw-level"><div class="sw-dot on"></div><div class="sw-dot on"></div><div class="sw-dot on"></div><div class="sw-dot on"></div><div class="sw-dot"></div></div></div>
+      </div>
+    </div>
+
+  </div>
+</section>
+
+<hr class="divider">
+
+<!-- PORTFOLIO -->
+<section class="section" id="portfolio">
+  <div class="section-label"><div class="bar"></div><h2>معرض الأعمال والملفات</h2></div>
+  <div class="file-tabs" id="fileTabs">
+    <button class="file-tab active" onclick="filterFiles('all',this)">🗂️ الكل (<span id="cnt-all">0</span>)</button>
+    <button class="file-tab" onclick="filterFiles('image',this)">🖼️ صور (<span id="cnt-image">0</span>)</button>
+    <button class="file-tab" onclick="filterFiles('pdf',this)">📄 PDF (<span id="cnt-pdf">0</span>)</button>
+    <button class="file-tab" onclick="filterFiles('cad',this)">📐 CAD (<span id="cnt-cad">0</span>)</button>
+    <button class="file-tab" onclick="filterFiles('geo',this)">🗺️ GIS (<span id="cnt-geo">0</span>)</button>
+    <button class="file-tab" onclick="filterFiles('doc',this)">📊 مستندات (<span id="cnt-doc">0</span>)</button>
+  </div>
+  <div class="files-stats" id="filesStats"></div>
+  <div class="gallery-grid" id="gallery"></div>
+</section>
+
+<hr class="divider">
+
+<!-- EDUCATION -->
+<section class="section" id="edu">
+  <div class="section-label"><div class="bar"></div><h2>التعليم والمهارات الشخصية</h2></div>
+  <div class="info-cards">
+    <div class="info-card">
+      <h3>🎓 المؤهل الأكاديمي</h3>
+      <p><strong>بكالوريوس نظم ومعلومات جغرافية</strong></p>
+      <p>كلية الآداب – جامعة الإسكندرية</p>
+      <p style="color:#888;font-size:.82rem;margin-top:6px;">2012 – 2016</p>
+    </div>
+    <div class="info-card">
+      <h3>🌐 اللغات والمهارات</h3>
+      <ul>
+        <li>🇸🇦 العربية – اللغة الأم</li>
+        <li>🇬🇧 الإنجليزية – جيد (قراءة التقنية)</li>
+      </ul>
+      <br>
+      <ul>
+        <li>✔ حل المشكلات الميدانية</li>
+        <li>✔ إدارة الوقت والمواعيد</li>
+        <li>✔ التنسيق مع المقاولين والاستشاريين</li>
+        <li>✔ رخصة قيادة سارية</li>
+      </ul>
+    </div>
+  </div>
+</section>
+
+<hr class="divider">
+
+<!-- CONTACT (info only, no form) -->
+<section class="section" id="contact">
+  <div class="section-label"><div class="bar"></div><h2>تواصل معي</h2></div>
+  <div class="contact-cols">
+    <div>
+      <div class="contact-item">
+        <svg viewBox="0 0 24 24"><path d="M6.6 10.8c1.4 2.8 3.8 5.1 6.6 6.6l2.2-2.2c.3-.3.7-.4 1-.2 1.1.4 2.3.6 3.6.6.6 0 1 .4 1 1V20c0 .6-.4 1-1 1-9.4 0-17-7.6-17-17 0-.6.4-1 1-1h3.5c.6 0 1 .4 1 1 0 1.3.2 2.5.6 3.6.1.3 0 .7-.2 1L6.6 10.8z"/></svg>
+        <div><div style="font-size:.72rem;color:#888;font-weight:600;">الجوال / واتساب</div><a href="tel:+966565627491">+966 565627491</a></div>
+      </div>
+      <div class="contact-item">
+        <svg viewBox="0 0 24 24"><path d="M20 4H4c-1.1 0-2 .9-2 2v12c0 1.1.9 2 2 2h16c1.1 0 2-.9 2-2V6c0-1.1-.9-2-2-2zm0 4l-8 5-8-5V6l8 5 8-5v2z"/></svg>
+        <div><div style="font-size:.72rem;color:#888;font-weight:600;">البريد الإلكتروني</div><a href="mailto:mahmoudmoustafakhmies@gmail.com">mahmoudmoustafakhmies@gmail.com</a></div>
+      </div>
+      <div class="contact-item">
+        <svg viewBox="0 0 24 24"><path d="M12 2C8.13 2 5 5.13 5 9c0 5.25 7 13 7 13s7-7.75 7-13c0-3.87-3.13-7-7-7zm0 9.5c-1.38 0-2.5-1.12-2.5-2.5s1.12-2.5 2.5-2.5 2.5 1.12 2.5 2.5-1.12 2.5-2.5 2.5z"/></svg>
+        <div><div style="font-size:.72rem;color:#888;font-weight:600;">الموقع الحالي</div><a href="#">الرياض – الدار البيضاء، المملكة العربية السعودية</a></div>
+      </div>
+    </div>
+    <div class="avail-box">
+      <h4>💼 متاح لـ</h4>
+      <ul>
+        <li>✔ دوام كامل (Full-time)</li>
+        <li>✔ مشاريع مساحة ميدانية</li>
+        <li>✔ مشاريع GIS وخرائط</li>
+        <li>✔ مشاريع FTTH – ألياف ضوئية</li>
+        <li>✔ استشارات هندسية</li>
+      </ul>
+    </div>
+  </div>
+</section>
+
+</div>
+
+<footer>
+  <strong>محمود مصطفى خميس رمضان</strong> · أخصائي مساحة ونظم معلومات جغرافية · الرياض، المملكة العربية السعودية<br>
+  <span style="font-size:.72rem;margin-top:6px;display:block;">+966 565627491 · mahmoudmoustafakhmies@gmail.com</span>
+</footer>
+
+<!-- LIGHTBOX -->
+<div class="lightbox" id="lightbox">
+  <div class="lb-img-wrap">
+    <button class="lb-close" onclick="closeLB()">✕</button>
+    <img id="lbImg" src="" alt="">
+  </div>
+  <div class="lb-caption" id="lbCaption"></div>
+  <div class="lb-nav">
+    <button onclick="lbPrev()">&#8594; السابقة</button>
+    <button onclick="lbNext()">التالية &#8592;</button>
+  </div>
+</div>
+
+<script>
+// ══ HELPERS ══
+function fmtSize(b){if(b<1024)return b+' B';if(b<1048576)return(b/1024).toFixed(1)+' KB';return(b/1048576).toFixed(1)+' MB';}
+function escH(s){return String(s).replace(/&/g,'&amp;').replace(/"/g,'&quot;').replace(/</g,'&lt;').replace(/>/g,'&gt;');}
+
+// ══ PORTFOLIO ══
+let files=[]; let activeFilter='all'; let nextId=0;
+let lbIndex=0; let lbImages=[];
+
+function getCat(ext){
+  if(['jpg','jpeg','png','gif','webp','bmp','tiff','svg'].includes(ext))return'image';
+  if(ext==='pdf')return'pdf';
+  if(['dwg','dxf','dwf','dgn'].includes(ext))return'cad';
+  if(['kmz','kml','shp','geojson','gpx','mif','tab','gdb'].includes(ext))return'geo';
+  return'doc';
+}
+function getIcon(ext,cat){
+  if(cat==='image')return'🖼️';if(cat==='pdf')return'📄';if(cat==='cad')return'📐';if(cat==='geo')return'🗺️';
+  return{xlsx:'📊',xls:'📊',csv:'📊',doc:'📝',docx:'📝',zip:'🗜️',rar:'🗜️'}[ext]||'📁';
+}
+
+function renderGallery(){
+  updateCounts();
+  const g=document.getElementById('gallery'); g.innerHTML='';
+  const visible=activeFilter==='all'?files:files.filter(f=>f.category===activeFilter);
+  // Build lightbox image list
+  lbImages=files.filter(f=>f.isImage);
+
+  if(files.length===0){
+    g.innerHTML=`<div style="grid-column:1/-1;text-align:center;padding:60px 40px;color:#bbb;"><div style="font-size:3rem;margin-bottom:12px;">📂</div><div style="font-size:.95rem;">لم يتم إضافة أعمال بعد</div></div>`;
+    document.getElementById('filesStats').textContent='';return;
+  }
+  if(visible.length===0){
+    g.innerHTML=`<div style="grid-column:1/-1;text-align:center;padding:40px;color:#aaa;"><div style="font-size:2.5rem;margin-bottom:10px;">📂</div><div>لا توجد ملفات في هذه الفئة</div></div>`;
+  }
+
+  visible.forEach(f=>{
+    const c=document.createElement('div');c.className='gallery-card';
+    if(f.isImage){
+      const imgIdx=lbImages.findIndex(img=>img.id===f.id);
+      c.innerHTML=`
+        <div class="img-wrapper">
+          <img class="gallery-img" src="${f.url}" alt="${escH(f.caption||f.name)}" loading="lazy">
+          <div class="img-overlay">
+            <div class="overlay-zoom" onclick="openLB(${imgIdx})">🔍</div>
+            <div class="overlay-caption">${escH(f.caption||f.name)}</div>
+          </div>
+        </div>
+        <div class="fsize-badge">${fmtSize(f.size)}</div>`;
+    } else {
+      c.innerHTML=`
+        <a class="file-preview" href="${f.url}" download="${escH(f.name)}">
+          <div class="ficon">${getIcon(f.ext,f.category)}</div>
+          <div class="fext">${f.ext.toUpperCase()}</div>
+          <div class="fname">${escH(f.name)}</div>
+        </a>
+        <div class="fsize-badge">${fmtSize(f.size)}</div>`;
+    }
+    g.appendChild(c);
+  });
+  const total=files.reduce((s,f)=>s+f.size,0);
+  document.getElementById('filesStats').textContent=`${files.length} ملف – إجمالي: ${fmtSize(total)}`;
+}
+
+function updateCounts(){
+  document.getElementById('cnt-all').textContent=files.length;
+  ['image','pdf','cad','geo','doc'].forEach(c=>{
+    const el=document.getElementById('cnt-'+c);
+    if(el)el.textContent=files.filter(f=>f.category===c).length;
+  });
+}
+function filterFiles(cat,btn){
+  activeFilter=cat;
+  document.querySelectorAll('.file-tab').forEach(t=>t.classList.remove('active'));
+  if(btn)btn.classList.add('active');
+  renderGallery();
+}
+// ══ LIGHTBOX with nav ══
+function openLB(idx){
+  if(lbImages.length===0)return;
+  lbIndex=idx;
+  showLBImage();
+  document.getElementById('lightbox').classList.add('open');
+  document.body.style.overflow='hidden';
+}
+function showLBImage(){
+  const f=lbImages[lbIndex];
+  if(!f)return;
+  document.getElementById('lbImg').src=f.url;
+  document.getElementById('lbCaption').textContent=f.caption||f.name;
+}
+function lbNext(){lbIndex=(lbIndex+1)%lbImages.length;showLBImage();}
+function lbPrev(){lbIndex=(lbIndex-1+lbImages.length)%lbImages.length;showLBImage();}
+function closeLB(){document.getElementById('lightbox').classList.remove('open');document.body.style.overflow='';}
+document.getElementById('lightbox').addEventListener('click',function(e){if(e.target===this)closeLB();});
+document.addEventListener('keydown',e=>{
+  if(!document.getElementById('lightbox').classList.contains('open'))return;
+  if(e.key==='Escape')closeLB();
+  if(e.key==='ArrowLeft')lbNext();
+  if(e.key==='ArrowRight')lbPrev();
+});
+
+// ══ INIT ══
+renderGallery();
+</script>
+</body>
+</html>
