@@ -561,6 +561,8 @@ footer strong{color:var(--gold);}
   <div class="gallery-grid" id="gallery"></div>
 </section>
 
+<script src="gallery-data.js"></script>
+
 <hr class="divider">
 
 <!-- EDUCATION -->
@@ -651,6 +653,19 @@ function escH(s){return String(s).replace(/&/g,'&amp;').replace(/"/g,'&quot;').r
 // ══ PORTFOLIO ══
 let files=[]; let activeFilter='all'; let nextId=0;
 let lbIndex=0; let lbImages=[];
+
+function initGallery(){
+  if(typeof galleryData!=='undefined'){
+    galleryData.forEach((item,i)=>{
+      const ext=item.url.split('.').pop().toLowerCase();
+      const cat=getCat(ext);
+      const isImage=cat==='image';
+      files.push({id:i,name:item.url.split('/').pop(),ext,category:cat,size:0,url:item.url,caption:item.caption||'',isImage});
+    });
+    nextId=files.length;
+  }
+  renderGallery();
+}
 
 function getCat(ext){
   if(['jpg','jpeg','png','gif','webp','bmp','tiff','svg'].includes(ext))return'image';
@@ -746,7 +761,7 @@ document.addEventListener('keydown',e=>{
 });
 
 // ══ INIT ══
-renderGallery();
+initGallery();
 </script>
 </body>
 </html>
