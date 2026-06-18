@@ -872,20 +872,38 @@ function adminLogout(){
   document.getElementById('adminPanel').classList.remove('visible');
 }
 
-// ══ GITHUB: PUT FILE (auto-handles SHA) ══
+// ══ GITHUB: PUT FILE (Git Tree API — supports files up to 100MB) ══
 async function ghPutFile(path,content,message){
-  let sha=null;
   try{
-    const r=await fetch(GH_API+'/repos/'+GH_OWNER+'/'+GH_REPO+'/contents/'+path+'?ref='+GH_BRANCH,{headers:ghHeaders()});
-    if(r.status===200){const d=await r.json();sha=d.sha;}
-  }catch(e){}
-  const body={message,content,branch:GH_BRANCH};
-  if(sha)body.sha=sha;
-  const r=await fetch(GH_API+'/repos/'+GH_OWNER+'/'+GH_REPO+'/contents/'+path,{method:'PUT',headers:ghHeaders(),body:JSON.stringify(body)});
-  return r.ok;
+    // 1. Create blob
+    const b=await fetch(GH_API+'/repos/'+GH_OWNER+'/'+GH_REPO+'/git/blobs',{method:'POST',headers:ghHeaders(),body:JSON.stringify({content,encoding:'base64'})});
+    if(!b.ok)return false;
+    const blob=await b.json();
+    // 2. Get current commit
+    const rf=await fetch(GH_API+'/repos/'+GH_OWNER+'/'+GH_REPO+'/git/refs/heads/'+GH_BRANCH,{headers:ghHeaders()});
+    if(!rf.ok)return false;
+    const ref=await rf.json();
+    // 3. Get current tree
+    const t=await fetch(GH_API+'/repos/'+GH_OWNER+'/'+GH_REPO+'/git/trees/'+ref.object.sha,{headers:ghHeaders()});
+    if(!t.ok)return false;
+    const tree=await t.json();
+    // 4. Build new tree (replace existing entry if path matches)
+    let entries=tree.tree.filter(e=>e.path!==path);
+    entries.push({path,mode:'100644',type:'blob',sha:blob.sha});
+    const nt=await fetch(GH_API+'/repos/'+GH_OWNER+'/'+GH_REPO+'/git/trees',{method:'POST',headers:ghHeaders(),body:JSON.stringify({tree:entries})});
+    if(!nt.ok)return false;
+    const newTree=await nt.json();
+    // 5. Create commit
+    const c=await fetch(GH_API+'/repos/'+GH_OWNER+'/'+GH_REPO+'/git/commits',{method:'POST',headers:ghHeaders(),body:JSON.stringify({message,tree:newTree.sha,parents:[ref.object.sha]})});
+    if(!c.ok)return false;
+    const commit=await c.json();
+    // 6. Update branch
+    const u=await fetch(GH_API+'/repos/'+GH_OWNER+'/'+GH_REPO+'/git/refs/heads/'+GH_BRANCH,{method:'PATCH',headers:ghHeaders(),body:JSON.stringify({sha:commit.sha,force:false})});
+    return u.ok;
+  }catch(e){return false;}
 }
 
-// ══ GITHUB: DELETE FILE ══
+// ══ GITHUB: DELETE FILE (Contents API) ══
 async function ghDeleteFile(path,message){
   let sha=null;
   try{
