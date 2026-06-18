@@ -949,7 +949,7 @@ async function adminUpload(){
   if(!uploaded.length){status.textContent='⚠ لم يتم رفع أي ملف';return;}
   // Fetch current index
   let idx=[];
-  try{const r=await fetch('files-index.json?t='+Date.now());if(r.ok)idx=await r.json();}catch(e){}
+  try{const idxUrl='https://raw.githubusercontent.com/'+GH_OWNER+'/'+GH_REPO+'/'+GH_BRANCH+'/files-index.json?t='+Date.now();const r=await fetch(idxUrl);if(r.ok)idx=await r.json();}catch(e){}
   uploaded.forEach(u=>idx.push(u));
   // Create blob for updated index
   try{
@@ -969,7 +969,7 @@ async function deleteFile(id){
   const f=files.find(x=>x.id===id&&x.uploaded);
   if(!f)return;
   let idx=[];
-  try{const r=await fetch('files-index.json?t='+Date.now());if(r.ok)idx=await r.json();}catch(e){}
+  try{const idxUrl='https://raw.githubusercontent.com/'+GH_OWNER+'/'+GH_REPO+'/'+GH_BRANCH+'/files-index.json?t='+Date.now();const r=await fetch(idxUrl);if(r.ok)idx=await r.json();}catch(e){}
   const filtered=idx.filter(x=>x.path!==f.path);
   try{
     const iSha=await ghUpload(btoa(unescape(encodeURIComponent(JSON.stringify(filtered,null,2)))));
@@ -984,7 +984,8 @@ async function deleteFile(id){
 // ══ LOAD FILES from GitHub ══
 async function loadGitHubFiles(){
   try{
-    const r=await fetch('files-index.json?t='+Date.now());
+    const idxUrl='https://raw.githubusercontent.com/'+GH_OWNER+'/'+GH_REPO+'/'+GH_BRANCH+'/files-index.json?t='+Date.now();
+    const r=await fetch(idxUrl);
     if(!r.ok)return;
     const idx=await r.json();
     if(!Array.isArray(idx))return;
