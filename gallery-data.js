@@ -14,3 +14,4 @@ const galleryData = [
 
   // ↓ ابدأ الإضافة من هنا ↓
 ];
+{ url: "images/اسم_صورتك.jpg", caption: "وصف المشروع" },
