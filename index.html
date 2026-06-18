@@ -880,35 +880,47 @@ function safeName(name){
   return b+name.slice(i);
 }
 
+// ══ GITHUB: API FETCH WITH ERROR LOGGING ══
+async function ghFetch(url,opts){
+  try{
+    if(!ghToken()){throw new Error('No token in session');}
+    const r=await fetch(url,opts);
+    if(!r.ok){
+      const txt=await r.text();
+      throw new Error('HTTP '+r.status+': '+txt.slice(0,150));
+    }
+    return r;
+  }catch(e){
+    throw e;
+  }
+}
+
 // ══ GITHUB: MAKE COMMIT ══
 async function ghMakeCommit(entries,removePaths,message){
   if(!removePaths)removePaths=[];
   try{
-    const rf=await fetch(GH_API+'/repos/'+GH_OWNER+'/'+GH_REPO+'/git/refs/heads/'+GH_BRANCH,{headers:ghHeaders()});
-    if(!rf.ok)return false;
+    const rf=await ghFetch(GH_API+'/repos/'+GH_OWNER+'/'+GH_REPO+'/git/refs/heads/'+GH_BRANCH,{headers:ghHeaders()});
     const ref=await rf.json();
-    const t=await fetch(GH_API+'/repos/'+GH_OWNER+'/'+GH_REPO+'/git/trees/'+ref.object.sha+'?recursive=1',{headers:ghHeaders()});
-    if(!t.ok)return false;
+    const t=await ghFetch(GH_API+'/repos/'+GH_OWNER+'/'+GH_REPO+'/git/trees/'+ref.object.sha+'?recursive=1',{headers:ghHeaders()});
     const tree=await t.json();
     const keep=tree.tree.filter(e=>e.type==='blob'
       && !entries.some(n=>n.path===e.path)
       && !removePaths.includes(e.path));
     const all=keep.concat(entries);
-    const nt=await fetch(GH_API+'/repos/'+GH_OWNER+'/'+GH_REPO+'/git/trees',{method:'POST',headers:ghHeaders(),body:JSON.stringify({tree:all})});
-    if(!nt.ok)return false;
+    const nt=await ghFetch(GH_API+'/repos/'+GH_OWNER+'/'+GH_REPO+'/git/trees',{method:'POST',headers:ghHeaders(),body:JSON.stringify({tree:all})});
     const nt2=await nt.json();
-    const c=await fetch(GH_API+'/repos/'+GH_OWNER+'/'+GH_REPO+'/git/commits',{method:'POST',headers:ghHeaders(),body:JSON.stringify({message,tree:nt2.sha,parents:[ref.object.sha]})});
-    if(!c.ok)return false;
+    const c=await ghFetch(GH_API+'/repos/'+GH_OWNER+'/'+GH_REPO+'/git/commits',{method:'POST',headers:ghHeaders(),body:JSON.stringify({message,tree:nt2.sha,parents:[ref.object.sha]})});
     const cm=await c.json();
-    const u=await fetch(GH_API+'/repos/'+GH_OWNER+'/'+GH_REPO+'/git/refs/heads/'+GH_BRANCH,{method:'PATCH',headers:ghHeaders(),body:JSON.stringify({sha:cm.sha,force:false})});
-    return u.ok;
-  }catch(e){return false;}
+    const u=await ghFetch(GH_API+'/repos/'+GH_OWNER+'/'+GH_REPO+'/git/refs/heads/'+GH_BRANCH,{method:'PATCH',headers:ghHeaders(),body:JSON.stringify({sha:cm.sha,force:false})});
+    return true;
+  }catch(e){
+    throw e;
+  }
 }
 
 // ══ GITHUB: UPLOAD BLOB ══
 async function ghUpload(content){ 
-  const r=await fetch(GH_API+'/repos/'+GH_OWNER+'/'+GH_REPO+'/git/blobs',{method:'POST',headers:ghHeaders(),body:JSON.stringify({content,encoding:'base64'})});
-  if(!r.ok)return null;
+  const r=await ghFetch(GH_API+'/repos/'+GH_OWNER+'/'+GH_REPO+'/git/blobs',{method:'POST',headers:ghHeaders(),body:JSON.stringify({content,encoding:'base64'})});
   return (await r.json()).sha;
 }
 
@@ -940,15 +952,14 @@ async function adminUpload(){
   try{const r=await fetch('files-index.json?t='+Date.now());if(r.ok)idx=await r.json();}catch(e){}
   uploaded.forEach(u=>idx.push(u));
   // Create blob for updated index
-  const iSha=await ghUpload(btoa(unescape(encodeURIComponent(JSON.stringify(idx,null,2)))));
-  if(!iSha){status.textContent='⚠ فشل تحديث الفهرس';return;}
-  entries.push({path:'files-index.json',mode:'100644',type:'blob',sha:iSha});
-  const ok=await ghMakeCommit(entries,[],'Upload '+uploaded.length+' files');
-  if(ok){
+  try{
+    const iSha=await ghUpload(btoa(unescape(encodeURIComponent(JSON.stringify(idx,null,2)))));
+    entries.push({path:'files-index.json',mode:'100644',type:'blob',sha:iSha});
+    await ghMakeCommit(entries,[],'Upload '+uploaded.length+' files');
     status.textContent='✅ تم رفع '+uploaded.length+' ملف';
     input.value='';initGallery();
-  }else{
-    status.textContent='⚠ فشل رفع الملفات إلى GitHub';
+  }catch(e){
+    status.textContent='⚠ '+e.message;
   }
 }
 
@@ -960,10 +971,13 @@ async function deleteFile(id){
   let idx=[];
   try{const r=await fetch('files-index.json?t='+Date.now());if(r.ok)idx=await r.json();}catch(e){}
   const filtered=idx.filter(x=>x.path!==f.path);
-  const iSha=await ghUpload(btoa(unescape(encodeURIComponent(JSON.stringify(filtered,null,2)))));
-  const entries=iSha?[{path:'files-index.json',mode:'100644',type:'blob',sha:iSha}]:[];
-  const ok=await ghMakeCommit(entries,[f.path],'Delete '+f.name);
-  status.textContent=ok?'🗑️ تم حذف الملف':'⚠ فشل حذف الملف';
+  try{
+    const iSha=await ghUpload(btoa(unescape(encodeURIComponent(JSON.stringify(filtered,null,2)))));
+    await ghMakeCommit([{path:'files-index.json',mode:'100644',type:'blob',sha:iSha}],[f.path],'Delete '+f.name);
+    status.textContent='🗵️ تم حذف الملف';
+  }catch(e){
+    status.textContent='⚠ '+e.message;
+  }
   initGallery();
 }
 
