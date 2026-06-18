@@ -872,19 +872,13 @@ function adminLogout(){
   document.getElementById('adminPanel').classList.remove('visible');
 }
 
-// ══ GITHUB: GET SHA OF A FILE ══
-async function ghGetSha(path){
+// ══ GITHUB: PUT FILE (auto-handles SHA) ══
+async function ghPutFile(path,content,message){
+  let sha=null;
   try{
     const r=await fetch(GH_API+'/repos/'+GH_OWNER+'/'+GH_REPO+'/contents/'+path+'?ref='+GH_BRANCH,{headers:ghHeaders()});
-    if(r.status===404)return null;
-    const d=await r.json();
-    return d.sha;
-  }catch(e){return null;}
-}
-
-// ══ GITHUB: PUT FILE ══
-async function ghPutFile(path,content,message){
-  const sha=await ghGetSha(path);
+    if(r.status===200){const d=await r.json();sha=d.sha;}
+  }catch(e){}
   const body={message,content,branch:GH_BRANCH};
   if(sha)body.sha=sha;
   const r=await fetch(GH_API+'/repos/'+GH_OWNER+'/'+GH_REPO+'/contents/'+path,{method:'PUT',headers:ghHeaders(),body:JSON.stringify(body)});
@@ -893,7 +887,11 @@ async function ghPutFile(path,content,message){
 
 // ══ GITHUB: DELETE FILE ══
 async function ghDeleteFile(path,message){
-  const sha=await ghGetSha(path);
+  let sha=null;
+  try{
+    const r=await fetch(GH_API+'/repos/'+GH_OWNER+'/'+GH_REPO+'/contents/'+path+'?ref='+GH_BRANCH,{headers:ghHeaders()});
+    if(r.status===200){const d=await r.json();sha=d.sha;}
+  }catch(e){}
   if(!sha)return false;
   const r=await fetch(GH_API+'/repos/'+GH_OWNER+'/'+GH_REPO+'/contents/'+path,{method:'DELETE',headers:ghHeaders(),body:JSON.stringify({message,sha,branch:GH_BRANCH})});
   return r.ok;
@@ -930,13 +928,25 @@ async function adminUpload(){
     if(r.ok)index=await r.json();
   }catch(e){}
   uploaded.forEach(u=>{index.push(u);});
-  const ok2=await ghPutFile('files-index.json',btoa(unescape(encodeURIComponent(JSON.stringify(index,null,2)))),'Update files index ('+loaded+' files)');
+  const jsonContent=btoa(unescape(encodeURIComponent(JSON.stringify(index,null,2))));
+  const ok2=await ghPutFile('files-index.json',jsonContent,'Update files index ('+loaded+' files)');
   if(ok2){
     status.textContent='✅ تم رفع '+loaded+' ملف إلى GitHub';
     input.value='';
     initGallery();
   }else{
-    status.textContent='⚠ رفع الملفات تم لكن فشل تحديث الفهرس';
+    // Fallback: try to get the SHA directly via raw fetch
+    try{
+      const rr=await fetch('https://raw.githubusercontent.com/'+GH_OWNER+'/'+GH_REPO+'/'+GH_BRANCH+'/files-index.json?t='+Date.now());
+      if(rr.ok){
+        const existing=await rr.json();
+        const merged=existing.concat(uploaded);
+        const mergedJson=btoa(unescape(encodeURIComponent(JSON.stringify(merged,null,2))));
+        const ok3=await ghPutFile('files-index.json',mergedJson,'Update files index retry ('+loaded+' files)');
+        if(ok3){status.textContent='✅ تم رفع '+loaded+' ملف إلى GitHub';input.value='';initGallery();return;}
+      }
+    }catch(e2){}
+    status.textContent='⚠ رفع الملفات تم لكن فشل تحديث الفهرس. جرّب سجّل خروج وادخل تاني';
   }
 }
 
@@ -954,8 +964,9 @@ async function deleteFile(id){
     if(r.ok)index=await r.json();
   }catch(e){}
   index=index.filter(x=>x.path!==f.path);
-  const ok2=await ghPutFile('files-index.json',btoa(unescape(encodeURIComponent(JSON.stringify(index,null,2)))),'Remove '+f.name+' from index');
-  if(ok2){status.textContent='🗑️ تم حذف الملف';initGallery();}
+  const jsonContent=btoa(unescape(encodeURIComponent(JSON.stringify(index,null,2))));
+  const ok2=await ghPutFile('files-index.json',jsonContent,'Remove '+f.name+' from index');
+  if(ok2){status.textContent='🗑️ تم حذف الملف';initGallery();}else{status.textContent='⚠ فشل تحديث الفهرس بعد الحذف';}
 }
 
 // ══ LOAD FILES from GitHub ══
