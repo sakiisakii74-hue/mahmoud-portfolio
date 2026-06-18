@@ -559,6 +559,11 @@ footer strong{color:var(--gold);}
   </div>
   <div class="files-stats" id="filesStats"></div>
   <div class="gallery-grid" id="gallery"></div>
+  <div id="adminPanel" style="display:none;margin-top:30px;padding:24px;background:var(--white);border-radius:10px;border:2px dashed var(--teal-mid);">
+    <h3 style="font-size:.95rem;margin-bottom:12px;color:var(--teal);">👤 رفع الصور (للمالك فقط)</h3>
+    <input type="file" id="adminFileInput" accept="image/*" multiple style="margin-bottom:12px;">
+    <div id="adminStatus" style="font-size:.8rem;color:#888;"></div>
+  </div>
 </section>
 
 <script src="gallery-data.js"></script>
@@ -655,6 +660,7 @@ let files=[]; let activeFilter='all'; let nextId=0;
 let lbIndex=0; let lbImages=[];
 
 function initGallery(){
+  files=[];
   if(typeof galleryData!=='undefined'){
     galleryData.forEach((item,i)=>{
       const ext=item.url.split('.').pop().toLowerCase();
@@ -662,8 +668,13 @@ function initGallery(){
       const isImage=cat==='image';
       files.push({id:i,name:item.url.split('/').pop(),ext,category:cat,size:0,url:item.url,caption:item.caption||'',isImage});
     });
-    nextId=files.length;
   }
+  const saved=JSON.parse(localStorage.getItem('portfolioImages')||'[]');
+  saved.forEach((item,i)=>{
+    const id=files.length+i;
+    files.push({id,name:item.caption,ext:'png',category:'image',size:0,url:item.url,caption:item.caption,isImage:true});
+  });
+  nextId=files.length;
   renderGallery();
 }
 
@@ -759,6 +770,26 @@ document.addEventListener('keydown',e=>{
   if(e.key==='ArrowLeft')lbNext();
   if(e.key==='ArrowRight')lbPrev();
 });
+
+// ══ ADMIN MODE (add ?admin to URL) ══
+if(location.search.includes('admin')){
+  document.getElementById('adminPanel').style.display='block';
+  document.getElementById('adminFileInput').addEventListener('change',function(e){
+    const status=document.getElementById('adminStatus');
+    const saved=JSON.parse(localStorage.getItem('portfolioImages')||'[]');
+    Array.from(e.target.files).forEach(file=>{
+      const r=new FileReader();
+      r.onload=ev=>{
+        saved.push({url:ev.target.result,caption:file.name,id:Date.now()});
+        localStorage.setItem('portfolioImages',JSON.stringify(saved));
+        status.textContent='✅ تم رفع '+(saved.length)+' صورة';
+        initGallery();
+      };
+      r.readAsDataURL(file);
+    });
+    this.value='';
+  });
+}
 
 // ══ INIT ══
 initGallery();
