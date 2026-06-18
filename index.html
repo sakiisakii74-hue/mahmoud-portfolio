@@ -885,7 +885,7 @@ async function ghCommit(treeEntries,message){
     const rf=await fetch(GH_API+'/repos/'+GH_OWNER+'/'+GH_REPO+'/git/refs/heads/'+GH_BRANCH,{headers:ghHeaders()});
     if(!rf.ok)return false;
     const ref=await rf.json();
-    const t=await fetch(GH_API+'/repos/'+GH_OWNER+'/'+GH_REPO+'/git/trees/'+ref.object.sha,{headers:ghHeaders()});
+    const t=await fetch(GH_API+'/repos/'+GH_OWNER+'/'+GH_REPO+'/git/trees/'+ref.object.sha+'?recursive=1',{headers:ghHeaders()});
     if(!t.ok)return false;
     const tree=await t.json();
     const oldEntries=tree.tree.filter(e=>!treeEntries.some(te=>te.path===e.path));
@@ -917,7 +917,7 @@ async function ghRemoveFile(path,message){
     const rf=await fetch(GH_API+'/repos/'+GH_OWNER+'/'+GH_REPO+'/git/refs/heads/'+GH_BRANCH,{headers:ghHeaders()});
     if(!rf.ok)return false;
     const ref=await rf.json();
-    const t=await fetch(GH_API+'/repos/'+GH_OWNER+'/'+GH_REPO+'/git/trees/'+ref.object.sha,{headers:ghHeaders()});
+    const t=await fetch(GH_API+'/repos/'+GH_OWNER+'/'+GH_REPO+'/git/trees/'+ref.object.sha+'?recursive=1',{headers:ghHeaders()});
     if(!t.ok)return false;
     const tree=await t.json();
     const entries=tree.tree.filter(e=>e.path!==path);
