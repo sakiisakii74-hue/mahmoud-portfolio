@@ -985,31 +985,52 @@ async function adminUpload(){
   }
 }
 
+// ══ GITHUB: DELETE FILE + UPDATE INDEX IN ONE COMMIT ══
+async function ghDeleteFileAndUpdateIndex(path,indexContent,message){
+  try{
+    const rf=await fetch(GH_API+'/repos/'+GH_OWNER+'/'+GH_REPO+'/git/refs/heads/'+GH_BRANCH,{headers:ghHeaders()});
+    if(!rf.ok)return false;
+    const ref=await rf.json();
+    const t=await fetch(GH_API+'/repos/'+GH_OWNER+'/'+GH_REPO+'/git/trees/'+ref.object.sha+'?recursive=1',{headers:ghHeaders()});
+    if(!t.ok)return false;
+    const tree=await t.json();
+    // Filter out the deleted file, then update files-index.json
+    let entries=tree.tree.filter(e=>e.path!==path);
+    // Create blob for new files-index.json
+    const b=await fetch(GH_API+'/repos/'+GH_OWNER+'/'+GH_REPO+'/git/blobs',{method:'POST',headers:ghHeaders(),body:JSON.stringify({content:indexContent,encoding:'base64'})});
+    if(!b.ok)return false;
+    const blob=await b.json();
+    // Replace files-index.json entry
+    entries=entries.filter(e=>e.path!=='files-index.json');
+    entries.push({path:'files-index.json',mode:'100644',type:'blob',sha:blob.sha});
+    const nt=await fetch(GH_API+'/repos/'+GH_OWNER+'/'+GH_REPO+'/git/trees',{method:'POST',headers:ghHeaders(),body:JSON.stringify({tree:entries})});
+    if(!nt.ok)return false;
+    const newTree=await nt.json();
+    const c=await fetch(GH_API+'/repos/'+GH_OWNER+'/'+GH_REPO+'/git/commits',{method:'POST',headers:ghHeaders(),body:JSON.stringify({message,tree:newTree.sha,parents:[ref.object.sha]})});
+    if(!c.ok)return false;
+    const commit=await c.json();
+    const u=await fetch(GH_API+'/repos/'+GH_OWNER+'/'+GH_REPO+'/git/refs/heads/'+GH_BRANCH,{method:'PATCH',headers:ghHeaders(),body:JSON.stringify({sha:commit.sha,force:false})});
+    return u.ok;
+  }catch(e){return false;}
+}
+
 // ══ DELETE FILE from GitHub ══
 async function deleteFile(id){
   const status=document.getElementById('adminStatus');
   const f=files.find(x=>x.id===id&&x.uploaded);
   if(!f)return;
-  // Remove from tree (null = not found, but still remove from index)
-  const removed=await ghRemoveFile(f.path,'Delete '+f.name);
-  // Update index: always remove entry
   let index=[];
   try{
     const r=await fetch('files-index.json?t='+Date.now());
     if(r.ok)index=await r.json();
   }catch(e){}
   const filtered=index.filter(x=>x.path!==f.path);
-  if(filtered.length===index.length && removed===null){
-    status.textContent='⚠ الملف مش موجود في GitHub';
-    initGallery();
-    return;
-  }
   const jsonContent=btoa(unescape(encodeURIComponent(JSON.stringify(filtered,null,2))));
-  const ok2=await ghUploadFile('files-index.json',jsonContent,'Remove '+f.name+' from index');
-  if(ok2){
+  const ok=await ghDeleteFileAndUpdateIndex(f.path,jsonContent,'Delete '+f.name);
+  if(ok){
     status.textContent='🗑️ تم حذف الملف';
   }else{
-    status.textContent='⚠ تم حذف الملف من الـ repo لكن فشل تحديث الفهرس';
+    status.textContent='⚠ فشل حذف الملف';
   }
   initGallery();
 }
