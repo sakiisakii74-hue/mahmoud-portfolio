@@ -957,7 +957,15 @@ async function adminUpload(){
     entries.push({path:'files-index.json',mode:'100644',type:'blob',sha:iSha});
     await ghMakeCommit(entries,[],'Upload '+uploaded.length+' files');
     status.textContent='✅ تم رفع '+uploaded.length+' ملف';
-    input.value='';initGallery();
+    input.value='';
+    // Add files directly without re-fetching
+    uploaded.forEach(u=>{
+      const id=files.length;
+      const cat=getCat(u.ext);
+      const url='https://raw.githubusercontent.com/'+GH_OWNER+'/'+GH_REPO+'/'+GH_BRANCH+'/'+u.path;
+      files.push({id,name:u.name,ext:u.ext,category:cat,size:u.size||0,url,caption:u.name,isImage:cat==='image',uploaded:true,path:u.path});
+    });
+    renderGallery();
   }catch(e){
     status.textContent='⚠ '+e.message;
   }
@@ -974,11 +982,15 @@ async function deleteFile(id){
   try{
     const iSha=await ghUpload(btoa(unescape(encodeURIComponent(JSON.stringify(filtered,null,2)))));
     await ghMakeCommit([{path:'files-index.json',mode:'100644',type:'blob',sha:iSha}],[f.path],'Delete '+f.name);
+    // Remove from files array directly
+    const idx=files.findIndex(x=>x.id===id);
+    if(idx>-1)files.splice(idx,1);
     status.textContent='🗵️ تم حذف الملف';
+    renderGallery();
   }catch(e){
     status.textContent='⚠ '+e.message;
+    initGallery();
   }
-  initGallery();
 }
 
 // ══ LOAD FILES from GitHub ══
