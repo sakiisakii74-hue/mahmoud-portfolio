@@ -872,39 +872,47 @@ function adminLogout(){
   document.getElementById('adminPanel').classList.remove('visible');
 }
 
-// ══ GITHUB: PUT FILE (Git Tree API — supports files up to 100MB) ══
-async function ghPutFile(path,content,message){
+// ══ SAFE FILE NAME (replace special chars) ══
+function safeName(name){
+  const ext=name.split('.').pop();
+  const base=name.slice(0,-(ext.length+1));
+  return base.replace(/[^a-zA-Z0-9_\u0600-\u06FF]/g,'_')+'.'+ext;
+}
+
+// ══ GITHUB: MAKE COMMIT VIA TREE API ══
+async function ghCommit(treeEntries,message){
   try{
-    // 1. Create blob
-    const b=await fetch(GH_API+'/repos/'+GH_OWNER+'/'+GH_REPO+'/git/blobs',{method:'POST',headers:ghHeaders(),body:JSON.stringify({content,encoding:'base64'})});
-    if(!b.ok)return false;
-    const blob=await b.json();
-    // 2. Get current commit
     const rf=await fetch(GH_API+'/repos/'+GH_OWNER+'/'+GH_REPO+'/git/refs/heads/'+GH_BRANCH,{headers:ghHeaders()});
     if(!rf.ok)return false;
     const ref=await rf.json();
-    // 3. Get current tree
     const t=await fetch(GH_API+'/repos/'+GH_OWNER+'/'+GH_REPO+'/git/trees/'+ref.object.sha,{headers:ghHeaders()});
     if(!t.ok)return false;
     const tree=await t.json();
-    // 4. Build new tree (replace existing entry if path matches)
-    let entries=tree.tree.filter(e=>e.path!==path);
-    entries.push({path,mode:'100644',type:'blob',sha:blob.sha});
-    const nt=await fetch(GH_API+'/repos/'+GH_OWNER+'/'+GH_REPO+'/git/trees',{method:'POST',headers:ghHeaders(),body:JSON.stringify({tree:entries})});
+    const oldEntries=tree.tree.filter(e=>!treeEntries.some(te=>te.path===e.path));
+    const allEntries=oldEntries.concat(treeEntries);
+    const nt=await fetch(GH_API+'/repos/'+GH_OWNER+'/'+GH_REPO+'/git/trees',{method:'POST',headers:ghHeaders(),body:JSON.stringify({tree:allEntries})});
     if(!nt.ok)return false;
     const newTree=await nt.json();
-    // 5. Create commit
     const c=await fetch(GH_API+'/repos/'+GH_OWNER+'/'+GH_REPO+'/git/commits',{method:'POST',headers:ghHeaders(),body:JSON.stringify({message,tree:newTree.sha,parents:[ref.object.sha]})});
     if(!c.ok)return false;
     const commit=await c.json();
-    // 6. Update branch
     const u=await fetch(GH_API+'/repos/'+GH_OWNER+'/'+GH_REPO+'/git/refs/heads/'+GH_BRANCH,{method:'PATCH',headers:ghHeaders(),body:JSON.stringify({sha:commit.sha,force:false})});
     return u.ok;
   }catch(e){return false;}
 }
 
-// ══ GITHUB: DELETE FILE (Git Tree API) ══
-async function ghDeleteFile(path,message){
+// ══ GITHUB: UPLOAD FILE ══
+async function ghUploadFile(path,content,message){
+  try{
+    const b=await fetch(GH_API+'/repos/'+GH_OWNER+'/'+GH_REPO+'/git/blobs',{method:'POST',headers:ghHeaders(),body:JSON.stringify({content,encoding:'base64'})});
+    if(!b.ok)return false;
+    const blob=await b.json();
+    return await ghCommit([{path,mode:'100644',type:'blob',sha:blob.sha}],message);
+  }catch(e){return false;}
+}
+
+// ══ GITHUB: REMOVE FILE FROM TREE ══
+async function ghRemoveFile(path,message){
   try{
     const rf=await fetch(GH_API+'/repos/'+GH_OWNER+'/'+GH_REPO+'/git/refs/heads/'+GH_BRANCH,{headers:ghHeaders()});
     if(!rf.ok)return false;
@@ -913,7 +921,7 @@ async function ghDeleteFile(path,message){
     if(!t.ok)return false;
     const tree=await t.json();
     const entries=tree.tree.filter(e=>e.path!==path);
-    if(entries.length===tree.tree.length)return false; // file not found
+    if(entries.length===tree.tree.length)return null; // not found
     const nt=await fetch(GH_API+'/repos/'+GH_OWNER+'/'+GH_REPO+'/git/trees',{method:'POST',headers:ghHeaders(),body:JSON.stringify({tree:entries})});
     if(!nt.ok)return false;
     const newTree=await nt.json();
@@ -941,8 +949,8 @@ async function adminUpload(){
       const base64=dataUrl.split(',')[1];
       const ext=file.name.split('.').pop().toLowerCase();
       const ts=Date.now();
-      const ghPath='uploads/'+ts+'_'+file.name;
-      const ok=await ghPutFile(ghPath,base64,'Upload '+file.name);
+      const ghPath='uploads/'+ts+'_'+safeName(file.name);
+      const ok=await ghUploadFile(ghPath,base64,'Upload '+file.name);
       if(!ok){status.textContent='⚠ فشل رفع: '+file.name;continue;}
       uploaded.push({name:file.name,ext,size:file.size,path:ghPath,id:ts+i});
       loaded++;
@@ -957,24 +965,23 @@ async function adminUpload(){
   }catch(e){}
   uploaded.forEach(u=>{index.push(u);});
   const jsonContent=btoa(unescape(encodeURIComponent(JSON.stringify(index,null,2))));
-  const ok2=await ghPutFile('files-index.json',jsonContent,'Update files index ('+loaded+' files)');
+  const ok2=await ghUploadFile('files-index.json',jsonContent,'Update files index ('+loaded+' files)');
   if(ok2){
     status.textContent='✅ تم رفع '+loaded+' ملف إلى GitHub';
     input.value='';
     initGallery();
   }else{
-    // Fallback: try to get the SHA directly via raw fetch
     try{
       const rr=await fetch('https://raw.githubusercontent.com/'+GH_OWNER+'/'+GH_REPO+'/'+GH_BRANCH+'/files-index.json?t='+Date.now());
       if(rr.ok){
         const existing=await rr.json();
         const merged=existing.concat(uploaded);
         const mergedJson=btoa(unescape(encodeURIComponent(JSON.stringify(merged,null,2))));
-        const ok3=await ghPutFile('files-index.json',mergedJson,'Update files index retry ('+loaded+' files)');
+        const ok3=await ghUploadFile('files-index.json',mergedJson,'Update files index retry ('+loaded+' files)');
         if(ok3){status.textContent='✅ تم رفع '+loaded+' ملف إلى GitHub';input.value='';initGallery();return;}
       }
     }catch(e2){}
-    status.textContent='⚠ رفع الملفات تم لكن فشل تحديث الفهرس. جرّب سجّل خروج وادخل تاني';
+    status.textContent='⚠ رفع الملفات تم لكن فشل تحديث الفهرس';
   }
 }
 
@@ -983,18 +990,28 @@ async function deleteFile(id){
   const status=document.getElementById('adminStatus');
   const f=files.find(x=>x.id===id&&x.uploaded);
   if(!f)return;
-  const ok=await ghDeleteFile(f.path,'Delete '+f.name);
-  if(!ok){status.textContent='⚠ فشل حذف الملف';return;}
-  // Update index: fetch & remove
+  // Remove from tree (null = not found, but still remove from index)
+  const removed=await ghRemoveFile(f.path,'Delete '+f.name);
+  // Update index: always remove entry
   let index=[];
   try{
     const r=await fetch('files-index.json?t='+Date.now());
     if(r.ok)index=await r.json();
   }catch(e){}
-  index=index.filter(x=>x.path!==f.path);
-  const jsonContent=btoa(unescape(encodeURIComponent(JSON.stringify(index,null,2))));
-  const ok2=await ghPutFile('files-index.json',jsonContent,'Remove '+f.name+' from index');
-  if(ok2){status.textContent='🗑️ تم حذف الملف';initGallery();}else{status.textContent='⚠ فشل تحديث الفهرس بعد الحذف';}
+  const filtered=index.filter(x=>x.path!==f.path);
+  if(filtered.length===index.length && removed===null){
+    status.textContent='⚠ الملف مش موجود في GitHub';
+    initGallery();
+    return;
+  }
+  const jsonContent=btoa(unescape(encodeURIComponent(JSON.stringify(filtered,null,2))));
+  const ok2=await ghUploadFile('files-index.json',jsonContent,'Remove '+f.name+' from index');
+  if(ok2){
+    status.textContent='🗑️ تم حذف الملف';
+  }else{
+    status.textContent='⚠ تم حذف الملف من الـ repo لكن فشل تحديث الفهرس';
+  }
+  initGallery();
 }
 
 // ══ LOAD FILES from GitHub ══
