@@ -671,8 +671,9 @@ footer strong{color:var(--gold);}
     <form id="loginForm" autocomplete="off">
       <input type="text" id="loginUser" placeholder="اسم المستخدم" required>
       <input type="password" id="loginPass" placeholder="كلمة المرور" required>
+      <input type="password" id="loginToken" placeholder="GitHub Token (لرفع الملفات)" required>
       <button type="submit">تسجيل الدخول</button>
-      <div class="login-error" id="loginError">اسم المستخدم أو كلمة المرور غير صحيحة</div>
+      <div class="login-error" id="loginError">اسم المستخدم أو كلمة المرور أو Token غير صحيحة</div>
     </form>
   </div>
 </div>
@@ -821,6 +822,15 @@ document.addEventListener('keydown',e=>{
   if(e.key==='ArrowRight')lbPrev();
 });
 
+// ══ GITHUB CONFIG ══
+const GH_OWNER='sakiisakii74-hue';
+const GH_REPO='mahmoud-portfolio';
+const GH_BRANCH='master';
+const GH_API='https://api.github.com';
+
+function ghToken(){return sessionStorage.getItem('ghToken');}
+function ghHeaders(){return{Authorization:'Bearer '+ghToken(),Accept:'application/vnd.github.v3+json'};}
+
 // ══ ADMIN LOGIN ══
 const ADMIN_USER='admin';
 const ADMIN_PASS='admin123';
@@ -829,8 +839,10 @@ document.getElementById('loginForm').addEventListener('submit',function(e){
   e.preventDefault();
   const u=document.getElementById('loginUser').value.trim();
   const p=document.getElementById('loginPass').value.trim();
-  if(u===ADMIN_USER && p===ADMIN_PASS){
+  const t=document.getElementById('loginToken').value.trim();
+  if(u===ADMIN_USER && p===ADMIN_PASS && t){
     sessionStorage.setItem('isAdmin','true');
+    sessionStorage.setItem('ghToken',t);
     document.getElementById('loginOverlay').classList.remove('open');
     showAdminPanel();
   } else {
@@ -856,48 +868,127 @@ function showAdminPanel(){
 }
 function adminLogout(){
   sessionStorage.removeItem('isAdmin');
+  sessionStorage.removeItem('ghToken');
   document.getElementById('adminPanel').classList.remove('visible');
 }
 
-// ══ ADMIN UPLOAD (all file types) ══
-function adminUpload(){
+// ══ GITHUB: GET SHA OF A FILE ══
+async function ghGetSha(path){
+  try{
+    const r=await fetch(GH_API+'/repos/'+GH_OWNER+'/'+GH_REPO+'/contents/'+path+'?ref='+GH_BRANCH,{headers:ghHeaders()});
+    if(r.status===404)return null;
+    const d=await r.json();
+    return d.sha;
+  }catch(e){return null;}
+}
+
+// ══ GITHUB: PUT FILE ══
+async function ghPutFile(path,content,message){
+  const sha=await ghGetSha(path);
+  const body={message,content,branch:GH_BRANCH};
+  if(sha)body.sha=sha;
+  const r=await fetch(GH_API+'/repos/'+GH_OWNER+'/'+GH_REPO+'/contents/'+path,{method:'PUT',headers:ghHeaders(),body:JSON.stringify(body)});
+  return r.ok;
+}
+
+// ══ GITHUB: DELETE FILE ══
+async function ghDeleteFile(path,message){
+  const sha=await ghGetSha(path);
+  if(!sha)return false;
+  const r=await fetch(GH_API+'/repos/'+GH_OWNER+'/'+GH_REPO+'/contents/'+path,{method:'DELETE',headers:ghHeaders(),body:JSON.stringify({message,sha,branch:GH_BRANCH})});
+  return r.ok;
+}
+
+// ══ ADMIN UPLOAD to GitHub ══
+async function adminUpload(){
   const input=document.getElementById('adminFileInput');
   const status=document.getElementById('adminStatus');
   const filesArr=input.files;
   if(!filesArr.length){status.textContent='⚠ لم تختر أي ملفات';return;}
-  const MAX_BYTES=4*1024*1024;
-  let oversized=[];
-  for(let i=0;i<filesArr.length;i++){if(filesArr[i].size>MAX_BYTES)oversized.push(filesArr[i].name);}
-  if(oversized.length){status.textContent='⚠ الملفات التالية أكبر من 4MB و لا يمكن رفعها: '+oversized.join(', ');return;}
-  const saved=JSON.parse(localStorage.getItem('portfolioFiles')||'[]');
+  status.textContent='⏳ جاري الرفع إلى GitHub...';
   let loaded=0;
-  Array.from(filesArr).forEach(file=>{
-    const r=new FileReader();
-    r.onload=ev=>{
+  const uploaded=[];
+  for(let i=0;i<filesArr.length;i++){
+    const file=filesArr[i];
+    try{
+      const dataUrl=await new Promise((res,rej)=>{const r=new FileReader();r.onload=e=>res(e.target.result);r.onerror=rej;r.readAsDataURL(file);});
+      const base64=dataUrl.split(',')[1];
       const ext=file.name.split('.').pop().toLowerCase();
-      saved.push({url:ev.target.result,name:file.name,ext,size:file.size,id:Date.now()+loaded});
+      const ts=Date.now();
+      const ghPath='uploads/'+ts+'_'+file.name;
+      const ok=await ghPutFile(ghPath,base64,'Upload '+file.name);
+      if(!ok){status.textContent='⚠ فشل رفع: '+file.name;continue;}
+      uploaded.push({name:file.name,ext,size:file.size,path:ghPath,id:ts+i});
       loaded++;
-      if(loaded===filesArr.length){
-        try{localStorage.setItem('portfolioFiles',JSON.stringify(saved));}catch(e){status.textContent='⚠ المساحة التخزينية غير كافية، تم رفع '+loaded+' ملف فقط';input.value='';return;}
-        status.textContent='✅ تم رفع '+loaded+' ملف';
-        input.value='';
-        initGallery();
-      }
-    };
-    r.onerror=()=>{status.textContent='⚠ خطأ في قراءة الملف: '+file.name;};
-    r.readAsDataURL(file);
-  });
+    }catch(e){status.textContent='⚠ خطأ في رفع '+file.name;continue;}
+  }
+  if(loaded===0){status.textContent='⚠ لم يتم رفع أي ملف';return;}
+  // Update files-index.json
+  let index=[];
+  try{
+    const r=await fetch('files-index.json?t='+Date.now());
+    if(r.ok)index=await r.json();
+  }catch(e){}
+  uploaded.forEach(u=>{index.push(u);});
+  const ok2=await ghPutFile('files-index.json',btoa(unescape(encodeURIComponent(JSON.stringify(index,null,2)))),'Update files index ('+loaded+' files)');
+  if(ok2){
+    status.textContent='✅ تم رفع '+loaded+' ملف إلى GitHub';
+    input.value='';
+    initGallery();
+  }else{
+    status.textContent='⚠ رفع الملفات تم لكن فشل تحديث الفهرس';
+  }
 }
 
-// ══ DELETE UPLOADED FILE ══
-function deleteFile(id){
-  let saved=JSON.parse(localStorage.getItem('portfolioFiles')||'[]');
-  const idx=files.findIndex(f=>f.id===id&&f.uploaded);
-  if(idx===-1)return;
-  const f=files[idx];
-  saved=saved.filter(item=>item.name!==f.name||item.size!==f.size);
-  localStorage.setItem('portfolioFiles',JSON.stringify(saved));
-  initGallery();
+// ══ DELETE FILE from GitHub ══
+async function deleteFile(id){
+  const status=document.getElementById('adminStatus');
+  const f=files.find(x=>x.id===id&&x.uploaded);
+  if(!f)return;
+  const ok=await ghDeleteFile(f.path,'Delete '+f.name);
+  if(!ok){status.textContent='⚠ فشل حذف الملف';return;}
+  // Update index: fetch & remove
+  let index=[];
+  try{
+    const r=await fetch('files-index.json?t='+Date.now());
+    if(r.ok)index=await r.json();
+  }catch(e){}
+  index=index.filter(x=>x.path!==f.path);
+  const ok2=await ghPutFile('files-index.json',btoa(unescape(encodeURIComponent(JSON.stringify(index,null,2)))),'Remove '+f.name+' from index');
+  if(ok2){status.textContent='🗑️ تم حذف الملف';initGallery();}
+}
+
+// ══ LOAD FILES from GitHub ══
+async function loadGitHubFiles(){
+  try{
+    const r=await fetch('files-index.json?t='+Date.now());
+    if(!r.ok)return;
+    const index=await r.json();
+    if(!Array.isArray(index))return;
+    index.forEach((item,i)=>{
+      const id=files.length+i;
+      const cat=getCat(item.ext);
+      const isImg=cat==='image';
+      const url='https://raw.githubusercontent.com/'+GH_OWNER+'/'+GH_REPO+'/'+GH_BRANCH+'/'+item.path;
+      files.push({id,name:item.name,ext:item.ext,category:cat,size:item.size||0,url,caption:item.name,isImage:isImg,uploaded:true,path:item.path});
+    });
+  }catch(e){}
+}
+
+function initGallery(){
+  files=[];
+  if(typeof galleryData!=='undefined'){
+    galleryData.forEach((item,i)=>{
+      const ext=item.url.split('.').pop().toLowerCase();
+      const cat=getCat(ext);
+      const isImage=cat==='image';
+      files.push({id:i,name:item.url.split('/').pop(),ext,category:cat,size:0,url:item.url,caption:item.caption||'',isImage});
+    });
+  }
+  loadGitHubFiles().then(()=>{
+    nextId=files.length;
+    renderGallery();
+  });
 }
 
 // ══ INIT ══
