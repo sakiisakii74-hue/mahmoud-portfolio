@@ -203,6 +203,30 @@ nav{position:sticky;top:0;z-index:200;background:rgba(15,28,30,.96);backdrop-fil
 footer{background:var(--ink);color:rgba(255,255,255,.4);text-align:center;padding:30px;font-size:.82rem;margin-top:60px;}
 footer strong{color:var(--gold);}
 
+/* ── LOGIN MODAL ── */
+.login-overlay{display:none;position:fixed;inset:0;background:rgba(0,0,0,.75);z-index:999;align-items:center;justify-content:center;}
+.login-overlay.open{display:flex;}
+.login-modal{background:var(--white);border-radius:12px;padding:36px;width:340px;max-width:90vw;box-shadow:0 20px 60px rgba(0,0,0,.3);text-align:center;}
+.login-modal h3{color:var(--teal);margin-bottom:6px;font-size:1.1rem;}
+.login-modal p{color:#888;font-size:.82rem;margin-bottom:20px;}
+.login-modal input{width:100%;padding:12px 14px;border:2px solid var(--mist);border-radius:6px;font-family:'Cairo',sans-serif;font-size:.9rem;margin-bottom:12px;outline:none;transition:border-color .15s;}
+.login-modal input:focus{border-color:var(--teal-mid);}
+.login-modal button{width:100%;padding:12px;background:var(--teal);color:white;border:none;border-radius:6px;font-family:'Cairo',sans-serif;font-size:.95rem;font-weight:700;cursor:pointer;transition:background .15s;}
+.login-modal button:hover{background:var(--teal-mid);}
+.login-error{color:var(--danger);font-size:.8rem;margin-top:10px;display:none;}
+
+/* ── ADMIN UPLOAD PANEL ── */
+.admin-panel{display:none;margin-top:30px;padding:28px;background:var(--white);border-radius:12px;border:2px dashed var(--teal-mid);}
+.admin-panel.visible{display:block;}
+.admin-panel h3{font-size:1rem;font-weight:700;color:var(--teal);margin-bottom:6px;}
+.admin-panel .sub{font-size:.82rem;color:#888;margin-bottom:16px;}
+.admin-panel input[type=file]{margin-bottom:14px;font-family:'Cairo',sans-serif;font-size:.85rem;}
+.admin-upload-btn{display:inline-flex;align-items:center;gap:8px;padding:10px 28px;background:var(--teal);color:white;border:none;border-radius:6px;font-family:'Cairo',sans-serif;font-size:.88rem;font-weight:700;cursor:pointer;transition:background .15s;}
+.admin-upload-btn:hover{background:var(--teal-mid);}
+.admin-logout{display:inline-flex;align-items:center;gap:6px;padding:8px 20px;background:var(--ink);color:rgba(255,255,255,.8);border:none;border-radius:6px;font-family:'Cairo',sans-serif;font-size:.82rem;font-weight:600;cursor:pointer;transition:background .15s;margin-right:10px;}
+.admin-logout:hover{background:#2a3a3c;}
+.admin-status{font-size:.82rem;color:#888;margin-top:12px;}
+
 /* ── MOBILE ── */
 @media(max-width:700px){
   .tl-item,.info-cards,.contact-cols{grid-template-columns:1fr;}
@@ -228,6 +252,7 @@ footer strong{color:var(--gold);}
     <a href="#portfolio">أعمالي</a>
     <a href="#contact">تواصل</a>
     <a href="MAHMOUD_MOUSTAFA.pdf" class="cv-dl-nav" download>⬇ CV</a>
+    <a href="#" id="loginBtn" style="color:rgba(255,255,255,.5);font-size:.75rem;font-weight:600;text-decoration:none;padding:4px 10px;border-radius:4px;transition:all .18s;">🔐</a>
   </div>
 </nav>
 
@@ -559,10 +584,14 @@ footer strong{color:var(--gold);}
   </div>
   <div class="files-stats" id="filesStats"></div>
   <div class="gallery-grid" id="gallery"></div>
-  <div id="adminPanel" style="display:none;margin-top:30px;padding:24px;background:var(--white);border-radius:10px;border:2px dashed var(--teal-mid);">
-    <h3 style="font-size:.95rem;margin-bottom:12px;color:var(--teal);">👤 رفع الصور (للمالك فقط)</h3>
-    <input type="file" id="adminFileInput" accept="image/*" multiple style="margin-bottom:12px;">
-    <div id="adminStatus" style="font-size:.8rem;color:#888;"></div>
+  <div class="admin-panel" id="adminPanel">
+    <div style="display:flex;align-items:center;justify-content:space-between;flex-wrap:wrap;gap:10px;">
+      <div><h3>🔧 لوحة التحكم</h3><div class="sub">رفع الملفات وإدارة المعرض</div></div>
+      <button class="admin-logout" onclick="adminLogout()">🚪 تسجيل الخروج</button>
+    </div>
+    <input type="file" id="adminFileInput" accept="*/*" multiple>
+    <button class="admin-upload-btn" onclick="adminUpload()">⬆ رفع الملفات</button>
+    <div class="admin-status" id="adminStatus"></div>
   </div>
 </section>
 
@@ -632,6 +661,20 @@ footer strong{color:var(--gold);}
 
 </div>
 
+<!-- LOGIN MODAL -->
+<div class="login-overlay" id="loginOverlay">
+  <div class="login-modal">
+    <h3>دخول المدير</h3>
+    <p>يرجى إدخال بيانات تسجيل الدخول</p>
+    <form id="loginForm" autocomplete="off">
+      <input type="text" id="loginUser" placeholder="اسم المستخدم" required>
+      <input type="password" id="loginPass" placeholder="كلمة المرور" required>
+      <button type="submit">تسجيل الدخول</button>
+      <div class="login-error" id="loginError">اسم المستخدم أو كلمة المرور غير صحيحة</div>
+    </form>
+  </div>
+</div>
+
 <footer>
   <strong>محمود مصطفى خميس رمضان</strong> · أخصائي مساحة ونظم معلومات جغرافية · الرياض، المملكة العربية السعودية<br>
   <span style="font-size:.72rem;margin-top:6px;display:block;">+966 565627491 · mahmoudmoustafakhmies@gmail.com</span>
@@ -669,10 +712,12 @@ function initGallery(){
       files.push({id:i,name:item.url.split('/').pop(),ext,category:cat,size:0,url:item.url,caption:item.caption||'',isImage});
     });
   }
-  const saved=JSON.parse(localStorage.getItem('portfolioImages')||'[]');
+  const saved=JSON.parse(localStorage.getItem('portfolioFiles')||'[]');
   saved.forEach((item,i)=>{
     const id=files.length+i;
-    files.push({id,name:item.caption,ext:'png',category:'image',size:0,url:item.url,caption:item.caption,isImage:true});
+    const cat=getCat(item.ext);
+    const isImg=cat==='image';
+    files.push({id,name:item.name,ext:item.ext,category:cat,size:item.size||0,url:item.url,caption:item.name,isImage:isImg});
   });
   nextId=files.length;
   renderGallery();
@@ -771,27 +816,71 @@ document.addEventListener('keydown',e=>{
   if(e.key==='ArrowRight')lbPrev();
 });
 
-// ══ ADMIN MODE (add ?admin to URL) ══
-if(location.search.includes('admin')){
-  document.getElementById('adminPanel').style.display='block';
-  document.getElementById('adminFileInput').addEventListener('change',function(e){
-    const status=document.getElementById('adminStatus');
-    const saved=JSON.parse(localStorage.getItem('portfolioImages')||'[]');
-    Array.from(e.target.files).forEach(file=>{
-      const r=new FileReader();
-      r.onload=ev=>{
-        saved.push({url:ev.target.result,caption:file.name,id:Date.now()});
-        localStorage.setItem('portfolioImages',JSON.stringify(saved));
-        status.textContent='✅ تم رفع '+(saved.length)+' صورة';
+// ══ ADMIN LOGIN ══
+const ADMIN_USER='admin';
+const ADMIN_PASS='admin123';
+
+document.getElementById('loginForm').addEventListener('submit',function(e){
+  e.preventDefault();
+  const u=document.getElementById('loginUser').value.trim();
+  const p=document.getElementById('loginPass').value.trim();
+  if(u===ADMIN_USER && p===ADMIN_PASS){
+    sessionStorage.setItem('isAdmin','true');
+    document.getElementById('loginOverlay').classList.remove('open');
+    showAdminPanel();
+  } else {
+    document.getElementById('loginError').style.display='block';
+  }
+});
+
+document.getElementById('loginBtn').addEventListener('click',function(e){
+  e.preventDefault();
+  if(sessionStorage.getItem('isAdmin')==='true'){
+    showAdminPanel(); return;
+  }
+  document.getElementById('loginError').style.display='none';
+  document.getElementById('loginOverlay').classList.add('open');
+});
+
+document.getElementById('loginOverlay').addEventListener('click',function(e){
+  if(e.target===this)this.classList.remove('open');
+});
+
+function showAdminPanel(){
+  document.getElementById('adminPanel').classList.add('visible');
+}
+function adminLogout(){
+  sessionStorage.removeItem('isAdmin');
+  document.getElementById('adminPanel').classList.remove('visible');
+}
+
+// ══ ADMIN UPLOAD (all file types) ══
+function adminUpload(){
+  const input=document.getElementById('adminFileInput');
+  const status=document.getElementById('adminStatus');
+  const filesArr=input.files;
+  if(!filesArr.length){status.textContent='⚠ لم تختر أي ملفات';return;}
+  const saved=JSON.parse(localStorage.getItem('portfolioFiles')||'[]');
+  let loaded=0;
+  Array.from(filesArr).forEach(file=>{
+    const r=new FileReader();
+    r.onload=ev=>{
+      const ext=file.name.split('.').pop().toLowerCase();
+      saved.push({url:ev.target.result,name:file.name,ext,size:file.size,id:Date.now()+loaded});
+      loaded++;
+      if(loaded===filesArr.length){
+        localStorage.setItem('portfolioFiles',JSON.stringify(saved));
+        status.textContent='✅ تم رفع '+loaded+' ملف';
+        input.value='';
         initGallery();
-      };
-      r.readAsDataURL(file);
-    });
-    this.value='';
+      }
+    };
+    r.readAsDataURL(file);
   });
 }
 
 // ══ INIT ══
+if(sessionStorage.getItem('isAdmin')==='true')showAdminPanel();
 initGallery();
 </script>
 </body>
