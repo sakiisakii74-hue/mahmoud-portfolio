@@ -589,7 +589,7 @@ footer strong{color:var(--gold);}
       <div><h3>🔧 لوحة التحكم</h3><div class="sub">رفع الملفات وإدارة المعرض</div></div>
       <button class="admin-logout" onclick="adminLogout()">🚪 تسجيل الخروج</button>
     </div>
-    <input type="file" id="adminFileInput" accept="*/*" multiple>
+    <input type="file" id="adminFileInput" multiple>
     <button class="admin-upload-btn" onclick="adminUpload()">⬆ رفع الملفات</button>
     <div class="admin-status" id="adminStatus"></div>
   </div>
@@ -860,6 +860,10 @@ function adminUpload(){
   const status=document.getElementById('adminStatus');
   const filesArr=input.files;
   if(!filesArr.length){status.textContent='⚠ لم تختر أي ملفات';return;}
+  const MAX_BYTES=4*1024*1024;
+  let oversized=[];
+  for(let i=0;i<filesArr.length;i++){if(filesArr[i].size>MAX_BYTES)oversized.push(filesArr[i].name);}
+  if(oversized.length){status.textContent='⚠ الملفات التالية أكبر من 4MB و لا يمكن رفعها: '+oversized.join(', ');return;}
   const saved=JSON.parse(localStorage.getItem('portfolioFiles')||'[]');
   let loaded=0;
   Array.from(filesArr).forEach(file=>{
@@ -869,12 +873,13 @@ function adminUpload(){
       saved.push({url:ev.target.result,name:file.name,ext,size:file.size,id:Date.now()+loaded});
       loaded++;
       if(loaded===filesArr.length){
-        localStorage.setItem('portfolioFiles',JSON.stringify(saved));
+        try{localStorage.setItem('portfolioFiles',JSON.stringify(saved));}catch(e){status.textContent='⚠ المساحة التخزينية غير كافية، تم رفع '+loaded+' ملف فقط';input.value='';return;}
         status.textContent='✅ تم رفع '+loaded+' ملف';
         input.value='';
         initGallery();
       }
     };
+    r.onerror=()=>{status.textContent='⚠ خطأ في قراءة الملف: '+file.name;};
     r.readAsDataURL(file);
   });
 }
