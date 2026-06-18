@@ -143,7 +143,7 @@ nav{position:sticky;top:0;z-index:200;background:rgba(15,28,30,.96);backdrop-fil
 .gallery-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(280px,1fr));gap:20px;}
 
 /* Image card with hover overlay */
-.gallery-card{background:var(--white);border-radius:10px;overflow:hidden;
+.gallery-card{background:var(--white);border-radius:10px;overflow:hidden;position:relative;
   box-shadow:0 2px 14px rgba(0,0,0,.07);transition:transform .22s,box-shadow .22s;position:relative;}
 .gallery-card:hover{transform:translateY(-5px);box-shadow:0 12px 36px rgba(0,0,0,.14);}
 .img-wrapper{position:relative;overflow:hidden;}
@@ -226,6 +226,8 @@ footer strong{color:var(--gold);}
 .admin-logout{display:inline-flex;align-items:center;gap:6px;padding:8px 20px;background:var(--ink);color:rgba(255,255,255,.8);border:none;border-radius:6px;font-family:'Cairo',sans-serif;font-size:.82rem;font-weight:600;cursor:pointer;transition:background .15s;margin-right:10px;}
 .admin-logout:hover{background:#2a3a3c;}
 .admin-status{font-size:.82rem;color:#888;margin-top:12px;}
+.del-btn{position:absolute;top:8px;right:8px;width:28px;height:28px;border-radius:50%;border:none;background:rgba(220,50,50,.85);color:white;font-size:.85rem;font-weight:700;cursor:pointer;transition:background .15s;z-index:5;display:flex;align-items:center;justify-content:center;}
+.del-btn:hover{background:var(--danger);}
 
 /* ── MOBILE ── */
 @media(max-width:700px){
@@ -717,7 +719,7 @@ function initGallery(){
     const id=files.length+i;
     const cat=getCat(item.ext);
     const isImg=cat==='image';
-    files.push({id,name:item.name,ext:item.ext,category:cat,size:item.size||0,url:item.url,caption:item.name,isImage:isImg});
+    files.push({id,name:item.name,ext:item.ext,category:cat,size:item.size||0,url:item.url,caption:item.name,isImage:isImg,uploaded:true});
   });
   nextId=files.length;
   renderGallery();
@@ -750,6 +752,7 @@ function renderGallery(){
     g.innerHTML=`<div style="grid-column:1/-1;text-align:center;padding:40px;color:#aaa;"><div style="font-size:2.5rem;margin-bottom:10px;">📂</div><div>لا توجد ملفات في هذه الفئة</div></div>`;
   }
 
+  const isAdmin=sessionStorage.getItem('isAdmin')==='true';
   visible.forEach(f=>{
     const c=document.createElement('div');c.className='gallery-card';
     if(f.isImage){
@@ -762,7 +765,8 @@ function renderGallery(){
             <div class="overlay-caption">${escH(f.caption||f.name)}</div>
           </div>
         </div>
-        <div class="fsize-badge">${fmtSize(f.size)}</div>`;
+        <div class="fsize-badge">${fmtSize(f.size)}</div>
+        ${f.uploaded&&isAdmin?'<button class="del-btn" onclick="deleteFile('+f.id+')">✕</button>':''}`;
     } else {
       c.innerHTML=`
         <a class="file-preview" href="${f.url}" download="${escH(f.name)}">
@@ -770,7 +774,8 @@ function renderGallery(){
           <div class="fext">${f.ext.toUpperCase()}</div>
           <div class="fname">${escH(f.name)}</div>
         </a>
-        <div class="fsize-badge">${fmtSize(f.size)}</div>`;
+        <div class="fsize-badge">${fmtSize(f.size)}</div>
+        ${f.uploaded&&isAdmin?'<button class="del-btn" onclick="deleteFile('+f.id+')">✕</button>':''}`;
     }
     g.appendChild(c);
   });
@@ -882,6 +887,17 @@ function adminUpload(){
     r.onerror=()=>{status.textContent='⚠ خطأ في قراءة الملف: '+file.name;};
     r.readAsDataURL(file);
   });
+}
+
+// ══ DELETE UPLOADED FILE ══
+function deleteFile(id){
+  let saved=JSON.parse(localStorage.getItem('portfolioFiles')||'[]');
+  const idx=files.findIndex(f=>f.id===id&&f.uploaded);
+  if(idx===-1)return;
+  const f=files[idx];
+  saved=saved.filter(item=>item.name!==f.name||item.size!==f.size);
+  localStorage.setItem('portfolioFiles',JSON.stringify(saved));
+  initGallery();
 }
 
 // ══ INIT ══
