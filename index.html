@@ -903,16 +903,26 @@ async function ghPutFile(path,content,message){
   }catch(e){return false;}
 }
 
-// ══ GITHUB: DELETE FILE (Contents API) ══
+// ══ GITHUB: DELETE FILE (Git Tree API) ══
 async function ghDeleteFile(path,message){
-  let sha=null;
   try{
-    const r=await fetch(GH_API+'/repos/'+GH_OWNER+'/'+GH_REPO+'/contents/'+path+'?ref='+GH_BRANCH,{headers:ghHeaders()});
-    if(r.status===200){const d=await r.json();sha=d.sha;}
-  }catch(e){}
-  if(!sha)return false;
-  const r=await fetch(GH_API+'/repos/'+GH_OWNER+'/'+GH_REPO+'/contents/'+path,{method:'DELETE',headers:ghHeaders(),body:JSON.stringify({message,sha,branch:GH_BRANCH})});
-  return r.ok;
+    const rf=await fetch(GH_API+'/repos/'+GH_OWNER+'/'+GH_REPO+'/git/refs/heads/'+GH_BRANCH,{headers:ghHeaders()});
+    if(!rf.ok)return false;
+    const ref=await rf.json();
+    const t=await fetch(GH_API+'/repos/'+GH_OWNER+'/'+GH_REPO+'/git/trees/'+ref.object.sha,{headers:ghHeaders()});
+    if(!t.ok)return false;
+    const tree=await t.json();
+    const entries=tree.tree.filter(e=>e.path!==path);
+    if(entries.length===tree.tree.length)return false; // file not found
+    const nt=await fetch(GH_API+'/repos/'+GH_OWNER+'/'+GH_REPO+'/git/trees',{method:'POST',headers:ghHeaders(),body:JSON.stringify({tree:entries})});
+    if(!nt.ok)return false;
+    const newTree=await nt.json();
+    const c=await fetch(GH_API+'/repos/'+GH_OWNER+'/'+GH_REPO+'/git/commits',{method:'POST',headers:ghHeaders(),body:JSON.stringify({message,tree:newTree.sha,parents:[ref.object.sha]})});
+    if(!c.ok)return false;
+    const commit=await c.json();
+    const u=await fetch(GH_API+'/repos/'+GH_OWNER+'/'+GH_REPO+'/git/refs/heads/'+GH_BRANCH,{method:'PATCH',headers:ghHeaders(),body:JSON.stringify({sha:commit.sha,force:false})});
+    return u.ok;
+  }catch(e){return false;}
 }
 
 // ══ ADMIN UPLOAD to GitHub ══
