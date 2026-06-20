@@ -961,7 +961,7 @@ async function ghMakeCommit(entries,removePaths,message){
     const nt2=await nt.json();
     const c=await ghFetch(GH_API+'/repos/'+GH_OWNER+'/'+GH_REPO+'/git/commits',{method:'POST',headers:ghHeaders(),body:JSON.stringify({message,tree:nt2.sha,parents:[ref.object.sha]})});
     const cm=await c.json();
-    const u=await ghFetch(GH_API+'/repos/'+GH_OWNER+'/'+GH_REPO+'/git/refs/heads/'+GH_BRANCH,{method:'PATCH',headers:ghHeaders(),body:JSON.stringify({sha:cm.sha,force:false})});
+    const u=await ghFetch(GH_API+'/repos/'+GH_OWNER+'/'+GH_REPO+'/git/refs/heads/'+GH_BRANCH,{method:'PATCH',headers:ghHeaders(),body:JSON.stringify({sha:cm.sha,force:true})});
     return true;
   }catch(e){
     throw e;
@@ -1074,7 +1074,7 @@ async function deleteFile(id){
     const nt2=await nt.json();
     const c=await ghFetch(GH_API+'/repos/'+GH_OWNER+'/'+GH_REPO+'/git/commits',{method:'POST',headers:ghHeaders(),body:JSON.stringify({message:'Delete '+f.name,tree:nt2.sha,parents:[ref.object.sha]})});
     const cm=await c.json();
-    await ghFetch(GH_API+'/repos/'+GH_OWNER+'/'+GH_REPO+'/git/refs/heads/'+GH_BRANCH,{method:'PATCH',headers:ghHeaders(),body:JSON.stringify({sha:cm.sha,force:false})});
+    await ghFetch(GH_API+'/repos/'+GH_OWNER+'/'+GH_REPO+'/git/refs/heads/'+GH_BRANCH,{method:'PATCH',headers:ghHeaders(),body:JSON.stringify({sha:cm.sha,force:true})});
     const fi=files.findIndex(x=>x.id===id);if(fi>-1)files.splice(fi,1);
     status.textContent='🗵️ تم حذف الملف';
     renderGallery();
