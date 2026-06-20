@@ -1094,15 +1094,17 @@ async function loadGitHubFiles(){
     const items=tree.tree.filter(e=>e.path.startsWith('uploads/')&&e.type==='blob');
     let meta={};
     try{const mr=await fetch('https://raw.githubusercontent.com/'+GH_OWNER+'/'+GH_REPO+'/'+GH_BRANCH+'/files-index.json?t='+Date.now());if(mr.ok){const mi=await mr.json();mi.forEach(x=>{meta[x.path]=x;});}}catch(e){}
+    var ghFiles=[];
     items.forEach((item,i)=>{
-      const id=files.length+i;
+      const id=i;
       const name=item.path.split('/').pop();
       const origName=meta[item.path]?meta[item.path].name:name.replace(/^\d+_/,'');
       const ext=name.split('.').pop().toLowerCase();
       const cat=getCat(ext);
       const url='https://raw.githubusercontent.com/'+GH_OWNER+'/'+GH_REPO+'/'+GH_BRANCH+'/'+item.path;
-      files.push({id,name:origName,ext,category:cat,size:meta[item.path]?.size||0,url,caption:origName,isImage:cat==='image',uploaded:true,path:item.path});
+      ghFiles.push({id,name:origName,ext,category:cat,size:meta[item.path]?.size||0,url,caption:origName,isImage:cat==='image',uploaded:true,path:item.path});
     });
+    files=ghFiles;
     try{localStorage.setItem('fileCache',JSON.stringify(files));}catch(e2){}
   }catch(e){}
 }
