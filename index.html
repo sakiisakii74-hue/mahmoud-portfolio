@@ -1110,9 +1110,10 @@ async function loadGitHubFiles(){
 }
 
 function initGallery(){
-  try{var cached=localStorage.getItem('fileCache');if(cached){files=JSON.parse(cached);renderGallery();}}catch(e){}
+  try{var cached=localStorage.getItem('fileCache');if(cached){files=JSON.parse(cached);renderGallery();return;}}catch(e){}
+  files=[];
   loadGitHubFiles().then(()=>{
-    try{var cached2=localStorage.getItem('fileCache');if(cached2&&JSON.parse(cached2).length>=files.length){return;}}catch(e3){}
+    try{localStorage.setItem('fileCache',JSON.stringify(files));}catch(e2){}
     nextId=files.length;
     renderGallery();
   });
