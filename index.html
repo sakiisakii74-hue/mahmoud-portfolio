@@ -1,4 +1,4 @@
-﻿<!DOCTYPE html>
+<!DOCTYPE html>
 <html lang="ar" dir="rtl" id="htmlRoot">
 <head>
 <meta charset="UTF-8">
@@ -1153,7 +1153,6 @@ const projectData=[
 ];
 function openProjectModal(i){
   const p=projectData[i]; if(!p)return;
-  const lm=window.langMap;
   document.getElementById('pmBody').innerHTML=
     '<div class="pm-tag">'+p.tag[currentLang]+'</div><h3>'+p.title[currentLang]+'</h3><div class="pm-loc">'+p.loc[currentLang]+'</div><div class="pm-desc">'+p.desc[currentLang]+'</div><ul class="pm-details">'+
     p.details[currentLang].map(d=>'<li>'+d+'</li>').join('')+'</ul>';
