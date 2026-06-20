@@ -1,9 +1,9 @@
-<!DOCTYPE html>
-<html lang="ar" dir="rtl">
+﻿<!DOCTYPE html>
+<html lang="ar" dir="rtl" id="htmlRoot">
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>محمود مصطفى خميس رمضان – أخصائي مساحة & GIS</title>
+<title id="pageTitle">محمود مصطفى خميس رمضان – أخصائي مساحة & GIS</title>
 <meta name="description" content="أخصائي مساحة ونظم معلومات جغرافية بخبرة +10 سنوات – FTTH – AutoCAD – GIS – الرياض">
 <link href="https://fonts.googleapis.com/css2?family=Cairo:wght@300;400;600;700;900&display=swap" rel="stylesheet">
 <style>
@@ -16,12 +16,13 @@ body{font-family:'Cairo',sans-serif;background:var(--sand);color:var(--body);lin
 
 /* ── NAV ── */
 nav{position:sticky;top:0;z-index:200;background:rgba(15,28,30,.96);backdrop-filter:blur(10px);
-  display:flex;align-items:center;justify-content:space-between;padding:0 32px;height:56px;}
+  display:flex;align-items:center;gap:32px;padding:0 32px;height:56px;}
 .nav-logo{color:var(--gold);font-weight:900;font-size:1rem;}
 .nav-links{display:flex;gap:6px;}
 .nav-links a{color:rgba(255,255,255,.7);text-decoration:none;font-size:.82rem;font-weight:600;
   padding:6px 14px;border-radius:4px;transition:all .18s;}
 .nav-links a:hover{color:var(--white);background:rgba(255,255,255,.1);}
+.nav-links a.active{color:var(--gold);background:rgba(200,168,75,.15);}
 
 /* ── HERO ── */
 .hero{background:var(--ink);color:var(--white);padding:90px 40px 70px;position:relative;overflow:hidden;text-align:center;}
@@ -83,7 +84,7 @@ nav{position:sticky;top:0;z-index:200;background:rgba(15,28,30,.96);backdrop-fil
 
 /* ── PROJECTS ── */
 .projects-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(300px,1fr));gap:20px;}
-.project-card{background:var(--white);border-radius:10px;overflow:hidden;box-shadow:0 2px 12px rgba(0,0,0,.06);transition:transform .2s,box-shadow .2s;}
+.project-card{background:var(--white);border-radius:10px;overflow:hidden;box-shadow:0 2px 12px rgba(0,0,0,.06);transition:transform .2s,box-shadow .2s;cursor:pointer;}
 .project-card:hover{transform:translateY(-4px);box-shadow:0 8px 28px rgba(0,0,0,.12);}
 .project-header{padding:20px 22px 16px;border-bottom:1px solid var(--mist);}
 .project-tag{display:inline-block;background:var(--mist);color:var(--teal);font-size:.72rem;font-weight:700;letter-spacing:.5px;padding:3px 10px;border-radius:3px;margin-bottom:10px;}
@@ -229,16 +230,37 @@ footer strong{color:var(--gold);}
 .del-btn{position:absolute;top:8px;right:8px;width:28px;height:28px;border-radius:50%;border:none;background:rgba(220,50,50,.85);color:white;font-size:.85rem;font-weight:700;cursor:pointer;transition:background .15s;z-index:5;display:flex;align-items:center;justify-content:center;}
 .del-btn:hover{background:var(--danger);}
 
-/* ── MOBILE ── */
+/* ── HAMBURGER ── */
+.hamburger{display:none;background:none;border:none;color:var(--gold);font-size:1.5rem;cursor:pointer;margin-right:auto;padding:6px 0;}
+.lang-toggle{background:none;border:1px solid rgba(255,255,255,.2);border-radius:4px;color:#fff;font-size:.85rem;cursor:pointer;padding:4px 10px;transition:all .18s;font-family:'Cairo',sans-serif;}
+.lang-toggle:hover{background:rgba(255,255,255,.1);border-color:var(--gold);}
 @media(max-width:700px){
+  .hamburger{display:block;}
+  nav{flex-wrap:wrap;padding:0 14px;height:auto;min-height:56px;}
+  .nav-links{display:none;flex-direction:column;width:100%;padding:10px 0 16px;gap:4px;}
+  .nav-links.open{display:flex;}
+  .nav-links a{font-size:.82rem;padding:8px 14px;width:100%;}
+  .nav-links a.cv-dl-nav{text-align:center;}
   .tl-item,.info-cards,.contact-cols{grid-template-columns:1fr;}
   .tl-time{border-left:none;padding:0;margin-bottom:8px;}
   .tl-time::before{display:none;}
   .hero{padding:70px 20px 50px;}
   .hero-sep{display:none;}
-  nav{padding:0 14px;}
-  .nav-links a{font-size:.72rem;padding:5px 9px;}
+  [style*="grid-template-columns:1fr 1fr"]{grid-template-columns:1fr!important;}
 }
+/* ── PROJECT MODAL ── */
+.project-modal-overlay{display:none;position:fixed;inset:0;background:rgba(0,0,0,.8);z-index:500;align-items:center;justify-content:center;}
+.project-modal-overlay.open{display:flex;}
+.project-modal{background:var(--white);border-radius:12px;padding:36px;max-width:560px;width:92vw;max-height:80vh;overflow-y:auto;position:relative;box-shadow:0 20px 60px rgba(0,0,0,.4);}
+.pm-close{position:absolute;top:12px;left:12px;background:none;border:none;font-size:1.4rem;cursor:pointer;color:#999;transition:color .15s;}
+.pm-close:hover{color:var(--danger);}
+.pm-tag{display:inline-block;background:var(--mist);color:var(--teal);font-size:.75rem;font-weight:700;padding:4px 12px;border-radius:3px;margin-bottom:12px;}
+.project-modal h3{font-size:1.2rem;font-weight:700;color:var(--ink);margin-bottom:6px;}
+.pm-loc{font-size:.82rem;color:#888;margin-bottom:16px;}
+.pm-desc{font-size:.92rem;line-height:1.8;color:var(--body);margin-bottom:16px;}
+.pm-details{list-style:none;border-top:1px solid var(--mist);padding-top:14px;}
+.pm-details li{padding:6px 0;font-size:.85rem;color:var(--body);}
+.pm-details li::before{content:'✓ ';color:var(--teal);font-weight:700;}
 </style>
 </head>
 <body>
@@ -246,35 +268,41 @@ footer strong{color:var(--gold);}
 <!-- NAV -->
 <nav>
   <div class="nav-logo">م.م. خميس رمضان</div>
-  <div class="nav-links">
-    <a href="#about">عني</a>
-    <a href="#projects">مشاريع</a>
-    <a href="#experience">خبرات</a>
-    <a href="#skills">مهارات</a>
-    <a href="#portfolio">أعمالي</a>
-    <a href="#contact">تواصل</a>
-    <a href="MAHMOUD_MOUSTAFA.pdf" class="cv-dl-nav" download>⬇ CV</a>
+  <button class="hamburger" id="hamburger" aria-label="القائمة">☰</button>
+  <div class="nav-links" id="navLinks">
+    <a href="#about" data-i18n="nav-about">عني</a>
+    <a href="#projects" data-i18n="nav-projects">مشاريع</a>
+    <a href="#experience" data-i18n="nav-experience">خبرات</a>
+    <a href="#skills" data-i18n="nav-skills">مهارات</a>
+    <a href="#portfolio" data-i18n="nav-portfolio">أعمالي</a>
+    <a href="#contact" data-i18n="nav-contact">تواصل</a>
+    <a href="MAHMOUD_MOUSTAFA.pdf" class="cv-dl-nav" download data-i18n="dl-cv-nav">⬇ CV</a>
     <a href="#" id="loginBtn" style="color:rgba(255,255,255,.5);font-size:.75rem;font-weight:600;text-decoration:none;padding:4px 10px;border-radius:4px;transition:all .18s;">🔐</a>
+    <button class="lang-toggle" id="langToggle" aria-label="English">🇬🇧</button>
   </div>
 </nav>
 
 <!-- HERO -->
 <header class="hero">
   <div class="hero-inner">
-    <div class="avail-badge"><span class="avail-dot"></span> متاح للعمل الآن</div>
-    <div class="hero-badge">أخصائي مساحة ونظم معلومات جغرافية أول</div>
+    <div class="avail-badge"><span class="avail-dot"></span><span data-i18n="hero-avail">متاح للعمل الآن</span></div>
+    <div class="hero-badge" data-i18n="hero-badge">أخصائي مساحة ونظم معلومات جغرافية أول</div>
     <h1>محمود مصطفى <span>خميس رمضان</span></h1>
-    <p class="hero-subtitle">رفع مساحي · GIS · FTTH · خطوط الغاز · As-Built · BOQ</p>
+    <p class="hero-subtitle" data-i18n="hero-subtitle">رفع مساحي · GIS · FTTH · خطوط الغاز · As-Built · BOQ</p>
     <div class="hero-years">
-      <div class="hero-stat"><span class="num">+10</span><span class="lbl">سنوات خبرة</span></div>
+      <div class="hero-stat"><span class="num">+10</span><span class="lbl" data-i18n="stat-1">سنوات خبرة</span></div>
       <div class="hero-sep"></div>
-      <div class="hero-stat"><span class="num">3</span><span class="lbl">شركات كبرى</span></div>
+      <div class="hero-stat"><span class="num">3</span><span class="lbl" data-i18n="stat-2">شركات كبرى</span></div>
       <div class="hero-sep"></div>
-      <div class="hero-stat"><span class="num">+50</span><span class="lbl">مشروع منفّذ</span></div>
+      <div class="hero-stat"><span class="num">+50</span><span class="lbl" data-i18n="stat-3">مشروع منفّذ</span></div>
       <div class="hero-sep"></div>
-      <div class="hero-stat"><span class="num">KSA</span><span class="lbl">الرياض</span></div>
+      <div class="hero-stat"><span class="num">KSA</span><span class="lbl" data-i18n="stat-4">الرياض</span></div>
     </div>
     <div class="hero-contacts">
+      <a href="https://www.linkedin.com/in/mahmoud-moustafa-4a0b62323/" target="_blank" rel="noopener" title="LinkedIn">
+        <svg viewBox="0 0 24 24"><path d="M19 3a2 2 0 012 2v14a2 2 0 01-2 2H5a2 2 0 01-2-2V5a2 2 0 012-2h14zm-.5 15.5v-5.3a3.26 3.26 0 00-3.26-3.26c-.85 0-1.84.52-2.32 1.3v-1.11h-2.79v8.37h2.79v-4.93c0-.77.62-1.4 1.39-1.4a1.4 1.4 0 011.4 1.4v4.93h2.79zM6.88 8.56a1.68 1.68 0 100-3.36 1.68 1.68 0 000 3.36zm1.45 9.94v-8.37H5.44v8.37h2.89z"/></svg>
+        LinkedIn
+      </a>
       <a href="tel:+966565627491">
         <svg viewBox="0 0 24 24"><path d="M6.6 10.8c1.4 2.8 3.8 5.1 6.6 6.6l2.2-2.2c.3-.3.7-.4 1-.2 1.1.4 2.3.6 3.6.6.6 0 1 .4 1 1V20c0 .6-.4 1-1 1-9.4 0-17-7.6-17-17 0-.6.4-1 1-1h3.5c.6 0 1 .4 1 1 0 1.3.2 2.5.6 3.6.1.3 0 .7-.2 1L6.6 10.8z"/></svg>
         +966 565627491
@@ -288,7 +316,7 @@ footer strong{color:var(--gold);}
         الرياض – الدار البيضاء
       </a>
     </div>
-    <a href="MAHMOUD_MOUSTAFA.pdf" class="cv-dl-hero" download>
+    <a href="MAHMOUD_MOUSTAFA.pdf" class="cv-dl-hero" download data-i18n="dl-cv">
       <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M4 16v1a3 3 0 003 3h10a3 3 0 003-3v-1m-4-4l-4 4m0 0l-4-4m4 4V4"/></svg>
       تحميل السيرة الذاتية
     </a>
@@ -300,74 +328,74 @@ footer strong{color:var(--gold);}
 <!-- STATS -->
 <section class="section" id="about" style="padding-bottom:0;">
   <div class="stats-row">
-    <div class="stat-card"><div class="s-num">+10</div><div class="s-lbl">سنوات خبرة ميدانية</div></div>
-    <div class="stat-card"><div class="s-num">+50</div><div class="s-lbl">مشروع مساحي منفّذ</div></div>
-    <div class="stat-card"><div class="s-num">5+</div><div class="s-lbl">محافظات مُسحت</div></div>
-    <div class="stat-card"><div class="s-num">FTTH</div><div class="s-lbl">ألياف ضوئية KSA</div></div>
-    <div class="stat-card"><div class="s-num">GIS</div><div class="s-lbl">نظم معلومات جغرافية</div></div>
+    <div class="stat-card"><div class="s-num">+10</div><div class="s-lbl" data-i18n="stat-card-1">سنوات خبرة ميدانية</div></div>
+    <div class="stat-card"><div class="s-num">+50</div><div class="s-lbl" data-i18n="stat-card-2">مشروع مساحي منفّذ</div></div>
+    <div class="stat-card"><div class="s-num">5+</div><div class="s-lbl" data-i18n="stat-card-3">محافظات مُسحت</div></div>
+    <div class="stat-card"><div class="s-num">FTTH</div><div class="s-lbl" data-i18n="stat-card-4">ألياف ضوئية KSA</div></div>
+    <div class="stat-card"><div class="s-num">GIS</div><div class="s-lbl" data-i18n="stat-card-5">نظم معلومات جغرافية</div></div>
   </div>
 </section>
 
 <!-- SUMMARY -->
 <section class="section" style="padding-top:36px;">
-  <div class="section-label"><div class="bar"></div><h2>الملخص المهني</h2></div>
+  <div class="section-label"><div class="bar"></div><h2 data-i18n="summary-title">الملخص المهني</h2></div>
   <div class="summary-card">
-    <p>أخصائي مساحة ونظم معلومات جغرافية بخبرة تتجاوز <strong>10 سنوات</strong> في أعمال الرفع المساحي، ونظم المعلومات الجغرافية (GIS)، ومشاريع البنية التحتية، وشبكات الألياف الضوئية (FTTH) في <strong>المملكة العربية السعودية</strong>، وخطوط الغاز الطبيعي في <strong>جمهورية مصر العربية</strong>. أمتلك خبرة واسعة في استخدام أجهزة الرفع المساحي (Total Station – GPS – LEVEL) وإعداد المخططات الهندسية الدقيقة، وحصر الكميات، وإعداد مخططات As-Built، ومتابعة الأعمال الميدانية والتنسيق مع المقاولين والاستشاريين حتى إتمام وتسليم المشاريع وفق <strong>أعلى معايير الجودة</strong>.</p>
+    <p data-i18n="summary-text">أخصائي مساحة ونظم معلومات جغرافية بخبرة تتجاوز <strong>10 سنوات</strong> في أعمال الرفع المساحي، ونظم المعلومات الجغرافية (GIS)، ومشاريع البنية التحتية، وشبكات الألياف الضوئية (FTTH) في <strong>المملكة العربية السعودية</strong>، وخطوط الغاز الطبيعي في <strong>جمهورية مصر العربية</strong>. أمتلك خبرة واسعة في استخدام أجهزة الرفع المساحي (Total Station – GPS – LEVEL) وإعداد المخططات الهندسية الدقيقة، وحصر الكميات، وإعداد مخططات As-Built، ومتابعة الأعمال الميدانية والتنسيق مع المقاولين والاستشاريين حتى إتمام وتسليم المشاريع وفق <strong>أعلى معايير الجودة</strong>.</p>
   </div>
 </section>
 <hr class="divider">
 
 <!-- PROJECTS -->
 <section class="section" id="projects">
-  <div class="section-label"><div class="bar"></div><h2>أبرز المشاريع المنفّذة</h2></div>
+  <div class="section-label"><div class="bar"></div><h2 data-i18n="proj-title">أبرز المشاريع المنفّذة</h2></div>
   <div class="projects-grid">
-    <div class="project-card">
+    <div class="project-card" onclick="openProjectModal(0)">
       <div class="project-header">
-        <div class="project-tag">🔌 FTTH – ألياف ضوئية</div>
-        <h4>شبكة الألياف الضوئية – الرياض</h4>
-        <div class="proj-loc">📍 الرياض، المملكة العربية السعودية · 2024 – الآن</div>
+        <div class="project-tag" data-i18n="pt0">🔌 FTTH – ألياف ضوئية</div>
+        <h4 data-i18n="ptt0">شبكة الألياف الضوئية – الرياض</h4>
+        <div class="proj-loc" data-i18n="pl0">📍 الرياض، المملكة العربية السعودية · 2024 – الآن</div>
       </div>
-      <div class="project-body"><p>إعداد مخططات الحفر، حصر الكميات (BOQ)، متابعة الأعمال الميدانية – التنسيق الكامل مع المقاولين حتى التسليم النهائي.</p></div>
+      <div class="project-body"><p data-i18n="pd0">إعداد مخططات الحفر، حصر الكميات (BOQ)، متابعة الأعمال الميدانية – التنسيق الكامل مع المقاولين حتى التسليم النهائي.</p></div>
     </div>
-    <div class="project-card">
+    <div class="project-card" onclick="openProjectModal(1)">
       <div class="project-header">
-        <div class="project-tag">🔥 خطوط الغاز الطبيعي</div>
-        <h4>مشروع الغاز – المناطق الصناعية سوهاج وقنا</h4>
-        <div class="proj-loc">📍 سوهاج – جرجا – طهطا – قفط · 2019 – 2023</div>
+        <div class="project-tag" data-i18n="pt1">🔥 خطوط الغاز الطبيعي</div>
+        <h4 data-i18n="ptt1">مشروع الغاز – المناطق الصناعية سوهاج وقنا</h4>
+        <div class="proj-loc" data-i18n="pl1">📍 سوهاج – جرجا – طهطا – قفط · 2019 – 2023</div>
       </div>
-      <div class="project-body"><p>رفع مساحي بـ GPS وتصميم مسارات خطوط الغاز الطبيعي للمناطق الصناعية بمحافظات متعددة في صعيد مصر.</p></div>
+      <div class="project-body"><p data-i18n="pd1">رفع مساحي بـ GPS وتصميم مسارات خطوط الغاز الطبيعي للمناطق الصناعية بمحافظات متعددة في صعيد مصر.</p></div>
     </div>
-    <div class="project-card">
+    <div class="project-card" onclick="openProjectModal(2)">
       <div class="project-header">
-        <div class="project-tag">🌍 GIS – حياة كريمة</div>
-        <h4>مشروع حياة كريمة – رفع قرى سوهاج وقنا</h4>
-        <div class="proj-loc">📍 سوهاج · قنا · الشرقية · العلمين · 2019 – 2023</div>
+        <div class="project-tag" data-i18n="pt2">🌍 GIS – حياة كريمة</div>
+        <h4 data-i18n="ptt2">مشروع حياة كريمة – رفع قرى سوهاج وقنا</h4>
+        <div class="proj-loc" data-i18n="pl2">📍 سوهاج · قنا · الشرقية · العلمين · 2019 – 2023</div>
       </div>
-      <div class="project-body"><p>الرفع المساحي الشامل لقرى عدة محافظات ضمن المبادرة الوطنية مع توقيع وتوثيق البيانات على منظومة GIS.</p></div>
+      <div class="project-body"><p data-i18n="pd2">الرفع المساحي الشامل لقرى عدة محافظات ضمن المبادرة الوطنية مع توقيع وتوثيق البيانات على منظومة GIS.</p></div>
     </div>
-    <div class="project-card">
+    <div class="project-card" onclick="openProjectModal(3)">
       <div class="project-header">
-        <div class="project-tag">📮 GIS – البريد السعودي</div>
-        <h4>مشروع البريد السعودي – نظم معلومات جغرافية</h4>
-        <div class="proj-loc">📍 المملكة العربية السعودية · 2014 – 2019</div>
+        <div class="project-tag" data-i18n="pt3">📮 GIS – البريد السعودي</div>
+        <h4 data-i18n="ptt3">مشروع البريد السعودي – نظم معلومات جغرافية</h4>
+        <div class="proj-loc" data-i18n="pl3">📍 المملكة العربية السعودية · 2014 – 2019</div>
       </div>
-      <div class="project-body"><p>العمل ضمن فريق GIS لمشروع البريد السعودي – رقمنة البيانات الجغرافية وإدخالها ضمن منظومة المعلومات الجغرافية.</p></div>
+      <div class="project-body"><p data-i18n="pd3">العمل ضمن فريق GIS لمشروع البريد السعودي – رقمنة البيانات الجغرافية وإدخالها ضمن منظومة المعلومات الجغرافية.</p></div>
     </div>
-    <div class="project-card">
+    <div class="project-card" onclick="openProjectModal(4)">
       <div class="project-header">
-        <div class="project-tag">🗺️ رفع مساحي</div>
-        <h4>رفع قرى الفيوم والبدرشين والإسكندرية</h4>
-        <div class="proj-loc">📍 الفيوم · البدرشين · الإسكندرية · 2014 – 2019</div>
+        <div class="project-tag" data-i18n="pt4">🗺️ رفع مساحي</div>
+        <h4 data-i18n="ptt4">رفع قرى الفيوم والبدرشين والإسكندرية</h4>
+        <div class="proj-loc" data-i18n="pl4">📍 الفيوم · البدرشين · الإسكندرية · 2014 – 2019</div>
       </div>
-      <div class="project-body"><p>رفع مساحي ميداني شامل لمناطق متعددة باستخدام Total Station وGPS وإعداد المخططات الهندسية الدقيقة.</p></div>
+      <div class="project-body"><p data-i18n="pd4">رفع مساحي ميداني شامل لمناطق متعددة باستخدام Total Station وGPS وإعداد المخططات الهندسية الدقيقة.</p></div>
     </div>
-    <div class="project-card">
+    <div class="project-card" onclick="openProjectModal(5)">
       <div class="project-header">
-        <div class="project-tag">📐 As-Built</div>
-        <h4>مخططات As-Built – مشاريع FTTH</h4>
-        <div class="proj-loc">📍 الرياض · 2024 – الآن</div>
+        <div class="project-tag" data-i18n="pt5">📐 As-Built</div>
+        <h4 data-i18n="ptt5">مخططات As-Built – مشاريع FTTH</h4>
+        <div class="proj-loc" data-i18n="pl5">📍 الرياض · 2024 – الآن</div>
       </div>
-      <div class="project-body"><p>إعداد مخططات As-Built النهائية لمشاريع الألياف الضوئية وتسليمها للاستشاريين وفق المواصفات المطلوبة.</p></div>
+      <div class="project-body"><p data-i18n="pd5">إعداد مخططات As-Built النهائية لمشاريع الألياف الضوئية وتسليمها للاستشاريين وفق المواصفات المطلوبة.</p></div>
     </div>
   </div>
 </section>
@@ -376,45 +404,45 @@ footer strong{color:var(--gold);}
 
 <!-- EXPERIENCE -->
 <section class="section" id="experience">
-  <div class="section-label"><div class="bar"></div><h2>التاريخ المهني</h2></div>
+  <div class="section-label"><div class="bar"></div><h2 data-i18n="exp-title">التاريخ المهني</h2></div>
   <div class="timeline">
     <div class="tl-item">
       <div class="tl-time">يناير 2024<br>– الآن</div>
       <div class="tl-body">
-        <div class="tl-company">شركة الهاجدية للمقاولات المحدودة – الرياض</div>
-        <div class="tl-role">أخصائي مساحة ونظم معلومات جغرافية أول</div>
+        <div class="tl-company" data-i18n="tc0">شركة الهاجدية للمقاولات المحدودة – الرياض</div>
+        <div class="tl-role" data-i18n="tr0">أخصائي مساحة ونظم معلومات جغرافية أول</div>
         <ul>
-          <li>مسح منطقة العمل الميدانية قبل بداية التنفيذ</li>
-          <li>إدارة حصر الكميات (حفر / فايبر) وحصر المواد المستحقة للمقاول</li>
-          <li>تجهيز مخططات الحفر بـ Photoshop موضحًا كل الأمتار الميدانية</li>
-          <li>إعداد محاضر إنجاز الأعمال حتى المطالبة النهائية للمقاول</li>
-          <li>إعداد BOQ النهائي (حفر / فايبر) لتسليمه لضوئيات</li>
-          <li>التعديل على المخططات وتسليمها للاستشاري</li>
-          <li>تسليم الموقع من البداية حتى إنهاء جميع التقارير</li>
+          <li data-i18n="tli00">مسح منطقة العمل الميدانية قبل بداية التنفيذ</li>
+          <li data-i18n="tli01">إدارة حصر الكميات (حفر / فايبر) وحصر المواد المستحقة للمقاول</li>
+          <li data-i18n="tli02">تجهيز مخططات الحفر بـ Photoshop موضحًا كل الأمتار الميدانية</li>
+          <li data-i18n="tli03">إعداد محاضر إنجاز الأعمال حتى المطالبة النهائية للمقاول</li>
+          <li data-i18n="tli04">إعداد BOQ النهائي (حفر / فايبر) لتسليمه لضوئيات</li>
+          <li data-i18n="tli05">التعديل على المخططات وتسليمها للاستشاري</li>
+          <li data-i18n="tli06">تسليم الموقع من البداية حتى إنهاء جميع التقارير</li>
         </ul>
       </div>
     </div>
     <div class="tl-item">
       <div class="tl-time">أغسطس 2019<br>– ديسمبر 2023</div>
       <div class="tl-body">
-        <div class="tl-company">شركة مودرن جاس – مصر</div>
-        <div class="tl-role">أخصائي مساحة</div>
+        <div class="tl-company" data-i18n="tc1">شركة مودرن جاس – مصر</div>
+        <div class="tl-role" data-i18n="tr1">أخصائي مساحة</div>
         <ul>
-          <li>رفع مساحي لقرى سوهاج – قنا – الشرقية – العلمين – الحمام (مشروع حياة كريمة)</li>
-          <li>استخدام GPS في توقيع ورفع خطوط الغاز الطبيعي بالمناطق الصناعية</li>
-          <li>تصميم مسارات خطوط الغاز الطبيعي بالمناطق الصناعية بمحافظات متعددة</li>
+          <li data-i18n="tli10">رفع مساحي لقرى سوهاج – قنا – الشرقية – العلمين – الحمام (مشروع حياة كريمة)</li>
+          <li data-i18n="tli11">استخدام GPS في توقيع ورفع خطوط الغاز الطبيعي بالمناطق الصناعية</li>
+          <li data-i18n="tli12">تصميم مسارات خطوط الغاز الطبيعي بالمناطق الصناعية بمحافظات متعددة</li>
         </ul>
       </div>
     </div>
     <div class="tl-item">
       <div class="tl-time">فبراير 2014<br>– يوليو 2019</div>
       <div class="tl-body">
-        <div class="tl-company">شركة باثفايندرز</div>
-        <div class="tl-role">أخصائي مساحة</div>
+        <div class="tl-company" data-i18n="tc2">شركة باثفايندرز</div>
+        <div class="tl-role" data-i18n="tr2">أخصائي مساحة</div>
         <ul>
-          <li>الرفع المساحي لقرى الفيوم – البدرشين – مناطق الإسكندرية</li>
-          <li>العمل في مشروع البريد السعودي في مجال GIS</li>
-          <li>إدخال وتوثيق البيانات الجغرافية</li>
+          <li data-i18n="tli20">الرفع المساحي لقرى الفيوم – البدرشين – مناطق الإسكندرية</li>
+          <li data-i18n="tli21">العمل في مشروع البريد السعودي في مجال GIS</li>
+          <li data-i18n="tli22">إدخال وتوثيق البيانات الجغرافية</li>
         </ul>
       </div>
     </div>
@@ -425,7 +453,7 @@ footer strong{color:var(--gold);}
 
 <!-- SKILLS + SOFTWARE -->
 <section class="section" id="skills">
-  <div class="section-label"><div class="bar"></div><h2>المهارات التقنية</h2></div>
+  <div class="section-label"><div class="bar"></div><h2 data-i18n="skills-title">المهارات التقنية</h2></div>
   <div style="display:grid;grid-template-columns:1fr 1fr;gap:40px;align-items:start;">
     <div>
       <div class="skills-grid">
@@ -442,7 +470,7 @@ footer strong{color:var(--gold);}
       </div>
     </div>
     <div class="skill-bar-section">
-      <p style="font-weight:700;color:var(--ink);margin-bottom:14px;">مستوى الكفاءة</p>
+      <p style="font-weight:700;color:var(--ink);margin-bottom:14px;" data-i18n="skills-level">مستوى الكفاءة</p>
       <div><div class="skill-bar-label"><span>الرفع المساحي & Total Station</span><span style="color:var(--teal)">95%</span></div><div class="skill-bar-track"><div class="skill-bar-fill" style="width:95%"></div></div></div>
       <div><div class="skill-bar-label"><span>GPS & التوقيع الميداني</span><span style="color:var(--teal)">95%</span></div><div class="skill-bar-track"><div class="skill-bar-fill" style="width:95%"></div></div></div>
       <div><div class="skill-bar-label"><span>AutoCAD & Civil 3D</span><span style="color:var(--teal)">90%</span></div><div class="skill-bar-track"><div class="skill-bar-fill" style="width:90%"></div></div></div>
@@ -454,7 +482,7 @@ footer strong{color:var(--gold);}
   </div>
 
   <!-- SOFTWARE BIG CARDS -->
-  <div class="section-label" style="margin-top:48px;margin-bottom:20px;"><div class="bar"></div><h2>البرامج والأدوات – تفصيلي</h2></div>
+  <div class="section-label" style="margin-top:48px;margin-bottom:20px;"><div class="bar"></div><h2 data-i18n="sw-title">البرامج والأدوات – تفصيلي</h2></div>
   <div class="sw-categories">
 
     <!-- CAD -->
@@ -575,24 +603,34 @@ footer strong{color:var(--gold);}
 
 <!-- PORTFOLIO -->
 <section class="section" id="portfolio">
-  <div class="section-label"><div class="bar"></div><h2>معرض الأعمال والملفات</h2></div>
+  <div class="section-label"><div class="bar"></div><h2 data-i18n="portfolio-title">معرض الأعمال والملفات</h2></div>
   <div class="file-tabs" id="fileTabs">
-    <button class="file-tab active" onclick="filterFiles('all',this)">🗂️ الكل (<span id="cnt-all">0</span>)</button>
-    <button class="file-tab" onclick="filterFiles('image',this)">🖼️ صور (<span id="cnt-image">0</span>)</button>
-    <button class="file-tab" onclick="filterFiles('pdf',this)">📄 PDF (<span id="cnt-pdf">0</span>)</button>
-    <button class="file-tab" onclick="filterFiles('cad',this)">📐 CAD (<span id="cnt-cad">0</span>)</button>
-    <button class="file-tab" onclick="filterFiles('geo',this)">🗺️ GIS (<span id="cnt-geo">0</span>)</button>
-    <button class="file-tab" onclick="filterFiles('doc',this)">📊 مستندات (<span id="cnt-doc">0</span>)</button>
+    <button class="file-tab active" onclick="filterFiles('all',this)"><span data-i18n="tab-all">🗂️ الكل</span> (<span id="cnt-all">0</span>)</button>
+    <button class="file-tab" onclick="filterFiles('image',this)"><span data-i18n="tab-image">🖼️ صور</span> (<span id="cnt-image">0</span>)</button>
+    <button class="file-tab" onclick="filterFiles('pdf',this)"><span data-i18n="tab-pdf">📄 PDF</span> (<span id="cnt-pdf">0</span>)</button>
+    <button class="file-tab" onclick="filterFiles('cad',this)"><span data-i18n="tab-cad">📐 CAD</span> (<span id="cnt-cad">0</span>)</button>
+    <button class="file-tab" onclick="filterFiles('geo',this)"><span data-i18n="tab-geo">🗺️ GIS</span> (<span id="cnt-geo">0</span>)</button>
+    <button class="file-tab" onclick="filterFiles('doc',this)"><span data-i18n="tab-doc">📊 مستندات</span> (<span id="cnt-doc">0</span>)</button>
+  </div>
+  <div style="display:flex;gap:12px;flex-wrap:wrap;margin-bottom:16px;">
+    <input type="text" id="searchInput" data-i18n="search-placeholder" placeholder="🔍 بحث في المعرض..." style="flex:1;min-width:180px;padding:10px 16px;border:2px solid var(--mist);border-radius:6px;font-family:'Cairo',sans-serif;font-size:.85rem;outline:none;transition:border-color .15s;" oninput="searchGallery(this.value)">
   </div>
   <div class="files-stats" id="filesStats"></div>
   <div class="gallery-grid" id="gallery"></div>
   <div class="admin-panel" id="adminPanel">
     <div style="display:flex;align-items:center;justify-content:space-between;flex-wrap:wrap;gap:10px;">
-      <div><h3>🔧 لوحة التحكم</h3><div class="sub">رفع الملفات وإدارة المعرض</div></div>
-      <button class="admin-logout" onclick="adminLogout()">🚪 تسجيل الخروج</button>
+      <div><h3 data-i18n="admin-title">🔧 لوحة التحكم</h3><div class="sub" data-i18n="admin-sub">رفع الملفات وإدارة المعرض</div></div>
+      <button class="admin-logout" onclick="adminLogout()" data-i18n="admin-logout">🚪 تسجيل الخروج</button>
+    </div>
+    <div style="margin:16px 0 8px;border-top:1px solid var(--mist);padding-top:16px;">
+      <label style="font-weight:700;font-size:.85rem;color:var(--teal);display:block;margin-bottom:6px;" data-i18n="admin-cv-label">📄 رفع السيرة الذاتية (CV)</label>
+      <div style="display:flex;gap:10px;flex-wrap:wrap;align-items:center;">
+        <input type="file" id="cvFileInput" accept=".pdf" style="flex:1;min-width:150px;">
+        <button class="admin-upload-btn" onclick="uploadCV()" data-i18n="admin-cv-btn">⬆ رفع CV</button>
+      </div>
     </div>
     <input type="file" id="adminFileInput" multiple>
-    <button class="admin-upload-btn" onclick="adminUpload()">⬆ رفع الملفات</button>
+    <button class="admin-upload-btn" onclick="adminUpload()" data-i18n="admin-upload-btn">⬆ رفع الملفات</button>
     <div class="admin-status" id="adminStatus"></div>
   </div>
 </section>
@@ -603,26 +641,26 @@ footer strong{color:var(--gold);}
 
 <!-- EDUCATION -->
 <section class="section" id="edu">
-  <div class="section-label"><div class="bar"></div><h2>التعليم والمهارات الشخصية</h2></div>
+  <div class="section-label"><div class="bar"></div><h2 data-i18n="edu-title">التعليم والمهارات الشخصية</h2></div>
   <div class="info-cards">
     <div class="info-card">
-      <h3>🎓 المؤهل الأكاديمي</h3>
-      <p><strong>بكالوريوس نظم ومعلومات جغرافية</strong></p>
-      <p>كلية الآداب – جامعة الإسكندرية</p>
-      <p style="color:#888;font-size:.82rem;margin-top:6px;">2012 – 2016</p>
+      <h3>🎓 <span data-i18n="edu-title-academic">المؤهل الأكاديمي</span></h3>
+      <p><strong data-i18n="edu-degree">بكالوريوس نظم ومعلومات جغرافية</strong></p>
+      <p data-i18n="edu-college">كلية الآداب – جامعة الإسكندرية</p>
+      <p style="color:#888;font-size:.82rem;margin-top:6px;" data-i18n="edu-year">2012 – 2016</p>
     </div>
     <div class="info-card">
-      <h3>🌐 اللغات والمهارات</h3>
+      <h3 data-i18n="edu-lang-title">🌐 اللغات والمهارات</h3>
       <ul>
-        <li>🇸🇦 العربية – اللغة الأم</li>
-        <li>🇬🇧 الإنجليزية – جيد (قراءة التقنية)</li>
+        <li data-i18n="edu-lang-1">🇸🇦 العربية – اللغة الأم</li>
+        <li data-i18n="edu-lang-2">🇬🇧 الإنجليزية – جيد (قراءة التقنية)</li>
       </ul>
       <br>
       <ul>
-        <li>✔ حل المشكلات الميدانية</li>
-        <li>✔ إدارة الوقت والمواعيد</li>
-        <li>✔ التنسيق مع المقاولين والاستشاريين</li>
-        <li>✔ رخصة قيادة سارية</li>
+        <li data-i18n="edu-skill-1">✔ حل المشكلات الميدانية</li>
+        <li data-i18n="edu-skill-2">✔ إدارة الوقت والمواعيد</li>
+        <li data-i18n="edu-skill-3">✔ التنسيق مع المقاولين والاستشاريين</li>
+        <li data-i18n="edu-skill-4">✔ رخصة قيادة سارية</li>
       </ul>
     </div>
   </div>
@@ -632,30 +670,30 @@ footer strong{color:var(--gold);}
 
 <!-- CONTACT (info only, no form) -->
 <section class="section" id="contact">
-  <div class="section-label"><div class="bar"></div><h2>تواصل معي</h2></div>
+  <div class="section-label"><div class="bar"></div><h2 data-i18n="contact-title">تواصل معي</h2></div>
   <div class="contact-cols">
     <div>
       <div class="contact-item">
         <svg viewBox="0 0 24 24"><path d="M6.6 10.8c1.4 2.8 3.8 5.1 6.6 6.6l2.2-2.2c.3-.3.7-.4 1-.2 1.1.4 2.3.6 3.6.6.6 0 1 .4 1 1V20c0 .6-.4 1-1 1-9.4 0-17-7.6-17-17 0-.6.4-1 1-1h3.5c.6 0 1 .4 1 1 0 1.3.2 2.5.6 3.6.1.3 0 .7-.2 1L6.6 10.8z"/></svg>
-        <div><div style="font-size:.72rem;color:#888;font-weight:600;">الجوال / واتساب</div><a href="tel:+966565627491">+966 565627491</a></div>
+        <div><div style="font-size:.72rem;color:#888;font-weight:600;" data-i18n="contact-phone-label">الجوال / واتساب</div><a href="tel:+966565627491">+966 565627491</a></div>
       </div>
       <div class="contact-item">
         <svg viewBox="0 0 24 24"><path d="M20 4H4c-1.1 0-2 .9-2 2v12c0 1.1.9 2 2 2h16c1.1 0 2-.9 2-2V6c0-1.1-.9-2-2-2zm0 4l-8 5-8-5V6l8 5 8-5v2z"/></svg>
-        <div><div style="font-size:.72rem;color:#888;font-weight:600;">البريد الإلكتروني</div><a href="mailto:mahmoudmoustafakhmies@gmail.com">mahmoudmoustafakhmies@gmail.com</a></div>
+        <div><div style="font-size:.72rem;color:#888;font-weight:600;" data-i18n="contact-email-label">البريد الإلكتروني</div><a href="mailto:mahmoudmoustafakhmies@gmail.com">mahmoudmoustafakhmies@gmail.com</a></div>
       </div>
       <div class="contact-item">
         <svg viewBox="0 0 24 24"><path d="M12 2C8.13 2 5 5.13 5 9c0 5.25 7 13 7 13s7-7.75 7-13c0-3.87-3.13-7-7-7zm0 9.5c-1.38 0-2.5-1.12-2.5-2.5s1.12-2.5 2.5-2.5 2.5 1.12 2.5 2.5-1.12 2.5-2.5 2.5z"/></svg>
-        <div><div style="font-size:.72rem;color:#888;font-weight:600;">الموقع الحالي</div><a href="#">الرياض – الدار البيضاء، المملكة العربية السعودية</a></div>
+        <div><div style="font-size:.72rem;color:#888;font-weight:600;" data-i18n="contact-location-label">الموقع الحالي</div><a href="#" data-i18n="contact-location">الرياض – الدار البيضاء، المملكة العربية السعودية</a></div>
       </div>
     </div>
     <div class="avail-box">
-      <h4>💼 متاح لـ</h4>
+      <h4 data-i18n="avail-title">💼 متاح لـ</h4>
       <ul>
-        <li>✔ دوام كامل (Full-time)</li>
-        <li>✔ مشاريع مساحة ميدانية</li>
-        <li>✔ مشاريع GIS وخرائط</li>
-        <li>✔ مشاريع FTTH – ألياف ضوئية</li>
-        <li>✔ استشارات هندسية</li>
+        <li data-i18n="avail-1">✔ دوام كامل (Full-time)</li>
+        <li data-i18n="avail-2">✔ مشاريع مساحة ميدانية</li>
+        <li data-i18n="avail-3">✔ مشاريع GIS وخرائط</li>
+        <li data-i18n="avail-4">✔ مشاريع FTTH – ألياف ضوئية</li>
+        <li data-i18n="avail-5">✔ استشارات هندسية</li>
       </ul>
     </div>
   </div>
@@ -663,23 +701,31 @@ footer strong{color:var(--gold);}
 
 </div>
 
+<!-- PROJECT MODAL -->
+<div class="project-modal-overlay" id="projectModal">
+  <div class="project-modal">
+    <button class="pm-close" onclick="closeProjectModal()">✕</button>
+    <div id="pmBody"></div>
+  </div>
+</div>
+
 <!-- LOGIN MODAL -->
 <div class="login-overlay" id="loginOverlay">
   <div class="login-modal">
-    <h3>دخول المدير</h3>
-    <p>يرجى إدخال بيانات تسجيل الدخول</p>
+    <h3 data-i18n="login-title">دخول المدير</h3>
+    <p data-i18n="login-desc">يرجى إدخال بيانات تسجيل الدخول</p>
     <form id="loginForm" autocomplete="off">
-      <input type="text" id="loginUser" placeholder="اسم المستخدم" required>
-      <input type="password" id="loginPass" placeholder="كلمة المرور" required>
-      <input type="password" id="loginToken" placeholder="GitHub Token" required>
-      <button type="submit">تسجيل الدخول</button>
-      <div class="login-error" id="loginError">اسم المستخدم أو كلمة المرور أو Token غير صحيحة</div>
+      <input type="text" id="loginUser" data-i18n="login-user-placeholder" placeholder="اسم المستخدم" required>
+      <input type="password" id="loginPass" data-i18n="login-pass-placeholder" placeholder="كلمة المرور" required>
+      <input type="password" id="loginToken" data-i18n="login-token-placeholder" placeholder="GitHub Token" required>
+      <button type="submit" data-i18n="login-btn">تسجيل الدخول</button>
+      <div class="login-error" id="loginError" data-i18n="login-error">اسم المستخدم أو كلمة المرور أو Token غير صحيحة</div>
     </form>
   </div>
 </div>
 
 <footer>
-  <strong>محمود مصطفى خميس رمضان</strong> · أخصائي مساحة ونظم معلومات جغرافية · الرياض، المملكة العربية السعودية<br>
+  <strong>محمود مصطفى خميس رمضان</strong> · <span data-i18n="footer-text">أخصائي مساحة ونظم معلومات جغرافية · الرياض، المملكة العربية السعودية</span><br>
   <span style="font-size:.72rem;margin-top:6px;display:block;">+966 565627491 · mahmoudmoustafakhmies@gmail.com</span>
 </footer>
 
@@ -691,8 +737,8 @@ footer strong{color:var(--gold);}
   </div>
   <div class="lb-caption" id="lbCaption"></div>
   <div class="lb-nav">
-    <button onclick="lbPrev()">&#8594; السابقة</button>
-    <button onclick="lbNext()">التالية &#8592;</button>
+    <button onclick="lbPrev()" data-i18n="lb-prev">→ السابقة</button>
+    <button onclick="lbNext()" data-i18n="lb-next">التالية ←</button>
   </div>
 </div>
 
@@ -741,16 +787,17 @@ function getIcon(ext,cat){
 function renderGallery(){
   updateCounts();
   const g=document.getElementById('gallery'); g.innerHTML='';
-  const visible=activeFilter==='all'?files:files.filter(f=>f.category===activeFilter);
+  let visible=activeFilter==='all'?files:files.filter(f=>f.category===activeFilter);
+  if(searchTerm)visible=visible.filter(f=>f.name.toLowerCase().includes(searchTerm)||(f.caption||'').toLowerCase().includes(searchTerm));
   // Build lightbox image list
   lbImages=files.filter(f=>f.isImage);
 
   if(files.length===0){
-    g.innerHTML=`<div style="grid-column:1/-1;text-align:center;padding:60px 40px;color:#bbb;"><div style="font-size:3rem;margin-bottom:12px;">📂</div><div style="font-size:.95rem;">لم يتم إضافة أعمال بعد</div></div>`;
+    g.innerHTML=`<div style="grid-column:1/-1;text-align:center;padding:60px 40px;color:#bbb;"><div style="font-size:3rem;margin-bottom:12px;">📂</div><div style="font-size:.95rem;">${window.langMap['file-stats-empty'][currentLang]}</div></div>`;
     document.getElementById('filesStats').textContent='';return;
   }
   if(visible.length===0){
-    g.innerHTML=`<div style="grid-column:1/-1;text-align:center;padding:40px;color:#aaa;"><div style="font-size:2.5rem;margin-bottom:10px;">📂</div><div>لا توجد ملفات في هذه الفئة</div></div>`;
+    g.innerHTML=`<div style="grid-column:1/-1;text-align:center;padding:40px;color:#aaa;"><div style="font-size:2.5rem;margin-bottom:10px;">📂</div><div>${window.langMap['file-stats-no-filter'][currentLang]}</div></div>`;
   }
 
   const isAdmin=sessionStorage.getItem('isAdmin')==='true';
@@ -781,8 +828,11 @@ function renderGallery(){
     g.appendChild(c);
   });
   const total=files.reduce((s,f)=>s+f.size,0);
-  document.getElementById('filesStats').textContent=`${files.length} ملف – إجمالي: ${fmtSize(total)}`;
+  document.getElementById('filesStats').textContent=currentLang==='ar'?`${files.length} ملف – إجمالي: ${fmtSize(total)}`:`${files.length} files – Total: ${fmtSize(total)}`;
 }
+
+let searchTerm='';
+function searchGallery(val){searchTerm=val.trim().toLowerCase();renderGallery();}
 
 function updateCounts(){
   document.getElementById('cnt-all').textContent=files.length;
@@ -947,18 +997,27 @@ async function adminUpload(){
     }catch(e){status.textContent='⚠ خطأ في قراءة '+f.name;continue;}
   }
   if(!uploaded.length){status.textContent='⚠ لم يتم رفع أي ملف';return;}
-  // Fetch current index
-  let idx=[];
-  try{const idxUrl='https://raw.githubusercontent.com/'+GH_OWNER+'/'+GH_REPO+'/'+GH_BRANCH+'/files-index.json?t='+Date.now();const r=await fetch(idxUrl);if(r.ok)idx=await r.json();}catch(e){}
-  uploaded.forEach(u=>idx.push(u));
-  // Create blob for updated index
   try{
-    const iSha=await ghUpload(btoa(unescape(encodeURIComponent(JSON.stringify(idx,null,2)))));
+    // Build index from tree + new files
+    const rf=await ghFetch(GH_API+'/repos/'+GH_OWNER+'/'+GH_REPO+'/git/refs/heads/'+GH_BRANCH,{headers:ghHeaders()});
+    const ref=await rf.json();
+    const t=await ghFetch(GH_API+'/repos/'+GH_OWNER+'/'+GH_REPO+'/git/trees/'+ref.object.sha+'?recursive=1',{headers:ghHeaders()});
+    const tree=await t.json();
+    const existing=tree.tree.filter(e=>e.path.startsWith('uploads/')&&e.type==='blob'&&!uploaded.some(u=>u.path===e.path));
+    const allPaths=existing.concat(uploaded.map(u=>({path:u.path})));
+    const newIdx=allPaths.map((e,i)=>({
+      name:e.path.split('/').pop().replace(/^\d+_/,''),
+      ext:e.path.split('.').pop().toLowerCase(),
+      size:0,path:e.path,id:Date.now()+i
+    }));
+    // Preserve metadata from old index
+    try{const mr=await fetch('https://raw.githubusercontent.com/'+GH_OWNER+'/'+GH_REPO+'/'+GH_BRANCH+'/files-index.json?t='+Date.now());if(mr.ok){const mi=await mr.json();mi.forEach(x=>{const m=newIdx.find(n=>n.path===x.path);if(m){m.name=x.name;m.size=x.size;}});}}catch(e){}
+    uploaded.forEach(u=>{const m=newIdx.find(n=>n.path===u.path);if(m){m.name=u.name;m.size=u.size;}});
+    const iSha=await ghUpload(btoa(unescape(encodeURIComponent(JSON.stringify(newIdx,null,2)))));
     entries.push({path:'files-index.json',mode:'100644',type:'blob',sha:iSha});
     await ghMakeCommit(entries,[],'Upload '+uploaded.length+' files');
     status.textContent='✅ تم رفع '+uploaded.length+' ملف';
     input.value='';
-    // Add files directly without re-fetching
     uploaded.forEach(u=>{
       const id=files.length;
       const cat=getCat(u.ext);
@@ -971,20 +1030,52 @@ async function adminUpload(){
   }
 }
 
+// ══ UPLOAD CV ══
+async function uploadCV(){
+  const status=document.getElementById('adminStatus');
+  const input=document.getElementById('cvFileInput');
+  const f=input.files[0];
+  if(!f||f.type!=='application/pdf'){status.textContent='⚠ اختر ملف PDF';return;}
+  status.textContent='⏳ جاري رفع السيرة الذاتية...';
+  try{
+    const du=await new Promise((rs,rj)=>{const r=new FileReader();r.onload=e=>rs(e.target.result);r.onerror=rj;r.readAsDataURL(f);});
+    const b64=du.split(',')[1];
+    const sha=await ghUpload(b64);
+    if(!sha){status.textContent='⚠ فشل رفع الملف';return;}
+    await ghMakeCommit([{path:'MAHMOUD_MOUSTAFA.pdf',mode:'100644',type:'blob',sha}],[],'Upload CV');
+    status.textContent='✅ تم رفع السيرة الذاتية';
+    input.value='';
+  }catch(e){
+    status.textContent='⚠ '+e.message;
+  }
+}
+
 // ══ DELETE FILE ══
 async function deleteFile(id){
   const status=document.getElementById('adminStatus');
   const f=files.find(x=>x.id===id&&x.uploaded);
   if(!f)return;
-  let idx=[];
-  try{const idxUrl='https://raw.githubusercontent.com/'+GH_OWNER+'/'+GH_REPO+'/'+GH_BRANCH+'/files-index.json?t='+Date.now();const r=await fetch(idxUrl);if(r.ok)idx=await r.json();}catch(e){}
-  const filtered=idx.filter(x=>x.path!==f.path);
   try{
-    const iSha=await ghUpload(btoa(unescape(encodeURIComponent(JSON.stringify(filtered,null,2)))));
-    await ghMakeCommit([{path:'files-index.json',mode:'100644',type:'blob',sha:iSha}],[f.path],'Delete '+f.name);
-    // Remove from files array directly
-    const idx=files.findIndex(x=>x.id===id);
-    if(idx>-1)files.splice(idx,1);
+    const rf=await ghFetch(GH_API+'/repos/'+GH_OWNER+'/'+GH_REPO+'/git/refs/heads/'+GH_BRANCH,{headers:ghHeaders()});
+    const ref=await rf.json();
+    const t=await ghFetch(GH_API+'/repos/'+GH_OWNER+'/'+GH_REPO+'/git/trees/'+ref.object.sha+'?recursive=1',{headers:ghHeaders()});
+    const tree=await t.json();
+    const remaining=tree.tree.filter(e=>e.path.startsWith('uploads/')&&e.type==='blob'&&e.path!==f.path);
+    const newIdx=remaining.map((e,i)=>({
+      name:e.path.split('/').pop().replace(/^\d+_/,''),
+      ext:e.path.split('.').pop().toLowerCase(),
+      size:0,path:e.path,id:Date.now()+i
+    }));
+    try{const mr=await fetch('https://raw.githubusercontent.com/'+GH_OWNER+'/'+GH_REPO+'/'+GH_BRANCH+'/files-index.json?t='+Date.now());if(mr.ok){const mi=await mr.json();mi.forEach(x=>{const m=newIdx.find(n=>n.path===x.path);if(m){m.name=x.name;m.size=x.size;}});}}catch(e){}
+    const iSha=await ghUpload(btoa(unescape(encodeURIComponent(JSON.stringify(newIdx,null,2)))));
+    const keep=tree.tree.filter(e=>e.type==='blob'&&e.path!==f.path&&e.path!=='files-index.json');
+    keep.push({path:'files-index.json',mode:'100644',type:'blob',sha:iSha});
+    const nt=await ghFetch(GH_API+'/repos/'+GH_OWNER+'/'+GH_REPO+'/git/trees',{method:'POST',headers:ghHeaders(),body:JSON.stringify({tree:keep})});
+    const nt2=await nt.json();
+    const c=await ghFetch(GH_API+'/repos/'+GH_OWNER+'/'+GH_REPO+'/git/commits',{method:'POST',headers:ghHeaders(),body:JSON.stringify({message:'Delete '+f.name,tree:nt2.sha,parents:[ref.object.sha]})});
+    const cm=await c.json();
+    await ghFetch(GH_API+'/repos/'+GH_OWNER+'/'+GH_REPO+'/git/refs/heads/'+GH_BRANCH,{method:'PATCH',headers:ghHeaders(),body:JSON.stringify({sha:cm.sha,force:false})});
+    const fi=files.findIndex(x=>x.id===id);if(fi>-1)files.splice(fi,1);
     status.textContent='🗵️ تم حذف الملف';
     renderGallery();
   }catch(e){
@@ -993,19 +1084,23 @@ async function deleteFile(id){
   }
 }
 
-// ══ LOAD FILES from GitHub ══
+// ══ LOAD FILES from GitHub tree ══
 async function loadGitHubFiles(){
   try{
-    const idxUrl='https://raw.githubusercontent.com/'+GH_OWNER+'/'+GH_REPO+'/'+GH_BRANCH+'/files-index.json?t='+Date.now();
-    const r=await fetch(idxUrl);
+    const r=await fetch('https://api.github.com/repos/'+GH_OWNER+'/'+GH_REPO+'/git/trees/HEAD?recursive=1',{headers:{Accept:'application/vnd.github.v3+json'}});
     if(!r.ok)return;
-    const idx=await r.json();
-    if(!Array.isArray(idx))return;
-    idx.forEach((item,i)=>{
+    const tree=await r.json();
+    const items=tree.tree.filter(e=>e.path.startsWith('uploads/')&&e.type==='blob');
+    let meta={};
+    try{const mr=await fetch('https://raw.githubusercontent.com/'+GH_OWNER+'/'+GH_REPO+'/'+GH_BRANCH+'/files-index.json?t='+Date.now());if(mr.ok){const mi=await mr.json();mi.forEach(x=>{meta[x.path]=x;});}}catch(e){}
+    items.forEach((item,i)=>{
       const id=files.length+i;
-      const cat=getCat(item.ext);
+      const name=item.path.split('/').pop();
+      const origName=meta[item.path]?meta[item.path].name:name.replace(/^\d+_/,'');
+      const ext=name.split('.').pop().toLowerCase();
+      const cat=getCat(ext);
       const url='https://raw.githubusercontent.com/'+GH_OWNER+'/'+GH_REPO+'/'+GH_BRANCH+'/'+item.path;
-      files.push({id,name:item.name,ext:item.ext,category:cat,size:item.size||0,url,caption:item.name,isImage:cat==='image',uploaded:true,path:item.path});
+      files.push({id,name:origName,ext,category:cat,size:meta[item.path]?.size||0,url,caption:origName,isImage:cat==='image',uploaded:true,path:item.path});
     });
   }catch(e){}
 }
@@ -1026,9 +1121,202 @@ function initGallery(){
   });
 }
 
+// ══ HAMBURGER TOGGLE ══
+document.getElementById('hamburger').addEventListener('click',function(){
+  document.getElementById('navLinks').classList.toggle('open');
+});
+document.querySelectorAll('.nav-links a').forEach(a=>{
+  a.addEventListener('click',()=>document.getElementById('navLinks').classList.remove('open'));
+});
+
+// ══ NAV ACTIVE SECTION ══
+function setActiveNav(id){
+  document.querySelectorAll('.nav-links a').forEach(a=>a.classList.toggle('active',a.getAttribute('href')==='#'+id));
+}
+const sections=document.querySelectorAll('section[id]');
+const obs=new IntersectionObserver(entries=>{
+  entries.forEach(e=>{if(e.isIntersecting){setActiveNav(e.target.id);}});
+},{rootMargin:'-40% 0px -55% 0px'});
+sections.forEach(s=>obs.observe(s));
+document.querySelectorAll('.nav-links a[href^="#"]').forEach(a=>{
+  a.addEventListener('click',function(){setActiveNav(this.getAttribute('href').slice(1));});
+});
+
+// ══ PROJECT MODAL ══
+const projectData=[
+  {tag:{ar:'🔌 FTTH – ألياف ضوئية',en:'🔌 FTTH – Fiber Optics'},title:{ar:'شبكة الألياف الضوئية – الرياض',en:'Fiber Optic Network – Riyadh'},loc:{ar:'📍 الرياض، المملكة العربية السعودية · 2024 – الآن',en:'📍 Riyadh, Saudi Arabia · 2024 – Present'},desc:{ar:'إعداد مخططات الحفر، حصر الكميات (BOQ)، متابعة الأعمال الميدانية – التنسيق الكامل مع المقاولين حتى التسليم النهائي.',en:'Preparing excavation drawings, BOQ, field work follow-up – full coordination with contractors up to final handover.'},details:{ar:['مسح منطقة العمل الميدانية','إعداد مخططات الحفر بالـ Photoshop','حصر كميات الحفر والفايبر','إعداد BOQ وتسليمه للاستشاري','تسليم الموقع بالكامل'],en:['Field site survey','Excavation drawings via Photoshop','Qty takeoff (excavation / fiber)','BOQ preparation & consultant handover','Full site handover']}},
+  {tag:{ar:'🔥 خطوط الغاز الطبيعي',en:'🔥 Natural Gas Pipelines'},title:{ar:'مشروع الغاز – المناطق الصناعية سوهاج وقنا',en:'Gas Project – Sohag & Qena Industrial Zones'},loc:{ar:'📍 سوهاج – جرجا – طهطا – قفط · 2019 – 2023',en:'📍 Sohag – Girga – Tahta – Qift · 2019 – 2023'},desc:{ar:'رفع مساحي بـ GPS وتصميم مسارات خطوط الغاز الطبيعي للمناطق الصناعية بمحافظات متعددة في صعيد مصر.',en:'GPS surveying and natural gas pipeline route design for industrial zones across multiple governorates in Upper Egypt.'},details:{ar:['رفع مساحي دقيق بـ GPS','تصميم مسارات خطوط الغاز','تنسيق مع فريق التنفيذ','توثيق البيانات على GIS'],en:['Precise GPS surveying','Gas pipeline route design','Coordination with execution team','GIS data documentation']}},
+  {tag:{ar:'🌍 GIS – حياة كريمة',en:'🌍 GIS – Decent Life'},title:{ar:'مشروع حياة كريمة – رفع قرى سوهاج وقنا',en:'Decent Life Project – Survey of Sohag & Qena Villages'},loc:{ar:'📍 سوهاج · قنا · الشرقية · العلمين · 2019 – 2023',en:'📍 Sohag · Qena · Sharqia · Alamein · 2019 – 2023'},desc:{ar:'الرفع المساحي الشامل لقرى عدة محافظات ضمن المبادرة الوطنية مع توقيع وتوثيق البيانات على منظومة GIS.',en:'Comprehensive topographic survey of villages across governorates under the national initiative with GIS data registration.'},details:{ar:['رفع مساحي شامل للمناطق المستهدفة','توقيع بيانات على منظومة GIS','إعداد تقارير فنية متكاملة'],en:['Comprehensive survey of target areas','GIS data registration','Integrated technical reports']}},
+  {tag:{ar:'📮 GIS – البريد السعودي',en:'📮 GIS – Saudi Post'},title:{ar:'مشروع البريد السعودي – نظم معلومات جغرافية',en:'Saudi Post – GIS Project'},loc:{ar:'📍 المملكة العربية السعودية · 2014 – 2019',en:'📍 Saudi Arabia · 2014 – 2019'},desc:{ar:'العمل ضمن فريق GIS لمشروع البريد السعودي – رقمنة البيانات الجغرافية وإدخالها ضمن منظومة المعلومات الجغرافية.',en:'Working within the GIS team for the Saudi Post project – digitizing geographic data into the GIS system.'},details:{ar:['رقمنة البيانات الجغرافية','إدخال بيانات على GIS','مراجعة وتحديث الخرائط'],en:['Geographic data digitization','GIS data entry','Map review & update']}},
+  {tag:{ar:'🗺️ رفع مساحي',en:'🗺️ Topographic Survey'},title:{ar:'رفع قرى الفيوم والبدرشين والإسكندرية',en:'Survey of Fayoum, Badrashin & Alexandria Villages'},loc:{ar:'📍 الفيوم · البدرشين · الإسكندرية · 2014 – 2019',en:'📍 Fayoum · Badrashin · Alexandria · 2014 – 2019'},desc:{ar:'رفع مساحي ميداني شامل لمناطق متعددة باستخدام Total Station وGPS وإعداد المخططات الهندسية الدقيقة.',en:'Comprehensive field surveying across multiple areas using Total Station and GPS with precise engineering drawings.'},details:{ar:['رفع مساحي بـ Total Station','توقيع نقاط بـ GPS','إعداد مخططات هندسية'],en:['Total Station surveying','GPS point marking','Engineering drawing preparation']}},
+  {tag:{ar:'📐 As-Built',en:'📐 As-Built'},title:{ar:'مخططات As-Built – مشاريع FTTH',en:'As-Built Drawings – FTTH Projects'},loc:{ar:'📍 الرياض · 2024 – الآن',en:'📍 Riyadh · 2024 – Present'},desc:{ar:'إعداد مخططات As-Built النهائية لمشاريع الألياف الضوئية وتسليمها للاستشاريين وفق المواصفات المطلوبة.',en:'Preparing final As-Built drawings for fiber optic projects and delivering them to consultants per required specifications.'},details:{ar:['إعداد مخططات As-Built','مراجعة مع الاستشاري','تسليم نهائي معتمد'],en:['As-Built drawing preparation','Consultant review','Approved final handover']}}
+];
+function openProjectModal(i){
+  const p=projectData[i]; if(!p)return;
+  const lm=window.langMap;
+  document.getElementById('pmBody').innerHTML=
+    '<div class="pm-tag">'+p.tag[currentLang]+'</div><h3>'+p.title[currentLang]+'</h3><div class="pm-loc">'+p.loc[currentLang]+'</div><div class="pm-desc">'+p.desc[currentLang]+'</div><ul class="pm-details">'+
+    p.details[currentLang].map(d=>'<li>'+d+'</li>').join('')+'</ul>';
+  document.getElementById('projectModal').classList.add('open');
+  document.body.style.overflow='hidden';
+}
+function closeProjectModal(){
+  document.getElementById('projectModal').classList.remove('open');
+  document.body.style.overflow='';
+}
+document.getElementById('projectModal').addEventListener('click',function(e){if(e.target===this)closeProjectModal();});
+
+// ══ I18N – عربي / English ══
+let currentLang='ar';
+function toggleLang(){
+  try{
+    currentLang=currentLang==='ar'?'en':'ar';
+    var isEn=currentLang==='en';
+    document.documentElement.lang=currentLang;
+    document.documentElement.dir=isEn?'ltr':'rtl';
+    document.getElementById('pageTitle').textContent=isEn?'Mahmoud Moustafa Khamis Ramadan – Survey & GIS Specialist':'محمود مصطفى خميس رمضان – أخصائي مساحة & GIS';
+    document.querySelector('meta[name="description"]').content=isEn?'Senior Survey & GIS Specialist with 10+ years – FTTH – AutoCAD – GIS – Riyadh':'أخصائي مساحة ونظم معلومات جغرافية بخبرة +10 سنوات – FTTH – AutoCAD – GIS – الرياض';
+    document.getElementById('langToggle').textContent=isEn?'🇸🇦':'🇬🇧';
+    document.querySelectorAll('[data-i18n]').forEach(function(el){
+      var key=el.getAttribute('data-i18n');
+      if(window.langMap[key]){
+        if(el.tagName==='INPUT'||el.tagName==='TEXTAREA')el.placeholder=window.langMap[key][currentLang];
+        else el.innerHTML=window.langMap[key][currentLang];
+      }
+    });
+  }catch(e){}
+}
+const langMap={
+  'nav-about':{ar:'عني',en:'About'},
+  'nav-projects':{ar:'مشاريع',en:'Projects'},
+  'nav-experience':{ar:'خبرات',en:'Experience'},
+  'nav-skills':{ar:'مهارات',en:'Skills'},
+  'nav-portfolio':{ar:'أعمالي',en:'Portfolio'},
+  'nav-contact':{ar:'تواصل',en:'Contact'},
+  'hero-avail':{ar:'متاح للعمل الآن',en:'Available for work now'},
+  'hero-badge':{ar:'أخصائي مساحة ونظم معلومات جغرافية أول',en:'Senior Survey & GIS Specialist'},
+  'hero-subtitle':{ar:'رفع مساحي · GIS · FTTH · خطوط الغاز · As-Built · BOQ',en:'Surveying · GIS · FTTH · Gas Pipelines · As-Built · BOQ'},
+  'stat-1':{ar:'سنوات خبرة',en:'Years Exp.'},
+  'stat-2':{ar:'شركات كبرى',en:'Major Cos.'},
+  'stat-3':{ar:'مشروع منفّذ',en:'Projects Done'},
+  'stat-4':{ar:'الرياض',en:'Riyadh'},
+  'stat-card-1':{ar:'سنوات خبرة ميدانية',en:'Years Field Exp.'},
+  'stat-card-2':{ar:'مشروع مساحي منفّذ',en:'Survey Proj.'},
+  'stat-card-3':{ar:'محافظات مُسحت',en:'Govs. Surveyed'},
+  'stat-card-4':{ar:'ألياف ضوئية KSA',en:'FTTH KSA'},
+  'stat-card-5':{ar:'نظم معلومات جغرافية',en:'GIS'},
+  'summary-title':{ar:'الملخص المهني',en:'Professional Summary'},
+  'summary-text':{ar:'أخصائي مساحة ونظم معلومات جغرافية بخبرة تتجاوز <strong>10 سنوات</strong> في أعمال الرفع المساحي، ونظم المعلومات الجغرافية (GIS)، ومشاريع البنية التحتية، وشبكات الألياف الضوئية (FTTH) في <strong>المملكة العربية السعودية</strong>، وخطوط الغاز الطبيعي في <strong>جمهورية مصر العربية</strong>. أمتلك خبرة واسعة في استخدام أجهزة الرفع المساحي (Total Station – GPS – LEVEL) وإعداد المخططات الهندسية الدقيقة، وحصر الكميات، وإعداد مخططات As-Built، ومتابعة الأعمال الميدانية والتنسيق مع المقاولين والاستشاريين حتى إتمام وتسليم المشاريع وفق <strong>أعلى معايير الجودة</strong>.',en:'Survey & GIS Specialist with over <strong>10 years</strong> of experience in surveying, GIS, infrastructure projects, FTTH networks in <strong>Saudi Arabia</strong>, and natural gas pipelines in <strong>Egypt</strong>. Skilled in Total Station, GPS, LEVEL, AutoCAD, BOQ, As-Built drawings, field coordination with contractors and consultants up to project handover per <strong>highest quality standards</strong>.'},
+  'proj-title':{ar:'أبرز المشاريع المنفّذة',en:'Key Projects'},
+  'exp-title':{ar:'التاريخ المهني',en:'Work History'},
+  'skills-title':{ar:'المهارات التقنية',en:'Technical Skills'},
+  'skills-level':{ar:'مستوى الكفاءة',en:'Proficiency'},
+  'sw-title':{ar:'البرامج والأدوات – تفصيلي',en:'Software & Tools – Detail'},
+  'portfolio-title':{ar:'معرض الأعمال والملفات',en:'Portfolio & Files'},
+  'tab-all':{ar:'🗂️ الكل',en:'🗂️ All'},
+  'tab-image':{ar:'🖼️ صور',en:'🖼️ Images'},
+  'tab-pdf':{ar:'📄 PDF',en:'📄 PDF'},
+  'tab-cad':{ar:'📐 CAD',en:'📐 CAD'},
+  'tab-geo':{ar:'🗺️ GIS',en:'🗺️ GIS'},
+  'tab-doc':{ar:'📊 مستندات',en:'📊 Docs'},
+  'search-placeholder':{ar:'🔍 بحث في المعرض...',en:'🔍 Search gallery...'},
+  'admin-title':{ar:'🔧 لوحة التحكم',en:'🔧 Admin Panel'},
+  'admin-sub':{ar:'رفع الملفات وإدارة المعرض',en:'Upload & manage files'},
+  'admin-logout':{ar:'🚪 تسجيل الخروج',en:'🚪 Logout'},
+  'admin-cv-label':{ar:'📄 رفع السيرة الذاتية (CV)',en:'📄 Upload CV'},
+  'admin-cv-btn':{ar:'⬆ رفع CV',en:'⬆ Upload CV'},
+  'admin-upload-btn':{ar:'⬆ رفع الملفات',en:'⬆ Upload Files'},
+  'edu-title':{ar:'التعليم والمهارات الشخصية',en:'Education & Skills'},
+  'edu-title-academic':{ar:'المؤهل الأكاديمي',en:'Academic Qualification'},
+  'edu-degree':{ar:'بكالوريوس نظم ومعلومات جغرافية',en:'B.Sc. GIS'},
+  'edu-college':{ar:'كلية الآداب – جامعة الإسكندرية',en:'Faculty of Arts – Alexandria Univ.'},
+  'edu-year':{ar:'2012 – 2016',en:'2012 – 2016'},
+  'edu-lang-title':{ar:'🌐 اللغات والمهارات',en:'🌐 Languages & Skills'},
+  'edu-lang-1':{ar:'🇸🇦 العربية – اللغة الأم',en:'🇸🇦 Arabic – Native'},
+  'edu-lang-2':{ar:'🇬🇧 الإنجليزية – جيد (قراءة التقنية)',en:'🇬🇧 English – Good (Technical reading)'},
+  'edu-skill-1':{ar:'✔ حل المشكلات الميدانية',en:'✔ Field problem solving'},
+  'edu-skill-2':{ar:'✔ إدارة الوقت والمواعيد',en:'✔ Time management'},
+  'edu-skill-3':{ar:'✔ التنسيق مع المقاولين والاستشاريين',en:'✔ Coordination with contractors'},
+  'edu-skill-4':{ar:'✔ رخصة قيادة سارية',en:'✔ Valid driving license'},
+  'contact-title':{ar:'تواصل معي',en:'Contact Me'},
+  'contact-phone-label':{ar:'الجوال / واتساب',en:'Mobile / WhatsApp'},
+  'contact-email-label':{ar:'البريد الإلكتروني',en:'Email'},
+  'contact-location-label':{ar:'الموقع الحالي',en:'Current Location'},
+  'contact-location':{ar:'الرياض – الدار البيضاء، المملكة العربية السعودية',en:'Riyadh – Al-Dar Al-Bayda, KSA'},
+  'avail-title':{ar:'💼 متاح لـ',en:'💼 Available for'},
+  'avail-1':{ar:'✔ دوام كامل (Full-time)',en:'✔ Full-time'},
+  'avail-2':{ar:'✔ مشاريع مساحة ميدانية',en:'✔ Field survey projects'},
+  'avail-3':{ar:'✔ مشاريع GIS وخرائط',en:'✔ GIS & mapping'},
+  'avail-4':{ar:'✔ مشاريع FTTH – ألياف ضوئية',en:'✔ FTTH projects'},
+  'avail-5':{ar:'✔ استشارات هندسية',en:'✔ Engineering consulting'},
+  'login-title':{ar:'دخول المدير',en:'Admin Login'},
+  'login-desc':{ar:'يرجى إدخال بيانات تسجيل الدخول',en:'Enter your credentials'},
+  'login-user-placeholder':{ar:'اسم المستخدم',en:'Username'},
+  'login-pass-placeholder':{ar:'كلمة المرور',en:'Password'},
+  'login-token-placeholder':{ar:'GitHub Token',en:'GitHub Token'},
+  'login-btn':{ar:'تسجيل الدخول',en:'Login'},
+  'login-error':{ar:'اسم المستخدم أو كلمة المرور أو Token غير صحيحة',en:'Invalid username, password, or token'},
+  'footer-text':{ar:'أخصائي مساحة ونظم معلومات جغرافية · الرياض، المملكة العربية السعودية',en:'Survey & GIS Specialist · Riyadh, KSA'},
+  'lb-next':{ar:'التالية ←',en:'Next →'},
+  'lb-prev':{ar:'→ السابقة',en:'→ Previous'},
+  'file-stats-empty':{ar:'لم يتم إضافة أعمال بعد',en:'No files added yet'},
+  'file-stats-no-filter':{ar:'لا توجد ملفات في هذه الفئة',en:'No files in this category'},
+  'pm-tool':{ar:'الأدوات المستخدمة',en:'Tools Used'},
+  'dl-cv':{ar:'تحميل السيرة الذاتية',en:'Download CV'},
+  'dl-cv-nav':{ar:'⬇ CV',en:'⬇ CV'},
+  'pt0':{ar:'🔌 FTTH – ألياف ضوئية',en:'🔌 FTTH – Fiber Optics'},
+  'ptt0':{ar:'شبكة الألياف الضوئية – الرياض',en:'Fiber Optic Network – Riyadh'},
+  'pl0':{ar:'📍 الرياض، المملكة العربية السعودية · 2024 – الآن',en:'📍 Riyadh, Saudi Arabia · 2024 – Present'},
+  'pd0':{ar:'إعداد مخططات الحفر، حصر الكميات (BOQ)، متابعة الأعمال الميدانية – التنسيق الكامل مع المقاولين حتى التسليم النهائي.',en:'Preparing excavation drawings, BOQ, field work follow-up – full coordination with contractors up to final handover.'},
+  'pt1':{ar:'🔥 خطوط الغاز الطبيعي',en:'🔥 Natural Gas Pipelines'},
+  'ptt1':{ar:'مشروع الغاز – المناطق الصناعية سوهاج وقنا',en:'Gas Project – Sohag & Qena Industrial Zones'},
+  'pl1':{ar:'📍 سوهاج – جرجا – طهطا – قفط · 2019 – 2023',en:'📍 Sohag – Girga – Tahta – Qift · 2019 – 2023'},
+  'pd1':{ar:'رفع مساحي بـ GPS وتصميم مسارات خطوط الغاز الطبيعي للمناطق الصناعية بمحافظات متعددة في صعيد مصر.',en:'GPS surveying and natural gas pipeline route design for industrial zones across multiple governorates in Upper Egypt.'},
+  'pt2':{ar:'🌍 GIS – حياة كريمة',en:'🌍 GIS – Decent Life'},
+  'ptt2':{ar:'مشروع حياة كريمة – رفع قرى سوهاج وقنا',en:'Decent Life Project – Survey of Sohag & Qena Villages'},
+  'pl2':{ar:'📍 سوهاج · قنا · الشرقية · العلمين · 2019 – 2023',en:'📍 Sohag · Qena · Sharqia · Alamein · 2019 – 2023'},
+  'pd2':{ar:'الرفع المساحي الشامل لقرى عدة محافظات ضمن المبادرة الوطنية مع توقيع وتوثيق البيانات على منظومة GIS.',en:'Comprehensive topographic survey of villages across governorates under the national initiative with GIS data registration.'},
+  'pt3':{ar:'📮 GIS – البريد السعودي',en:'📮 GIS – Saudi Post'},
+  'ptt3':{ar:'مشروع البريد السعودي – نظم معلومات جغرافية',en:'Saudi Post – GIS Project'},
+  'pl3':{ar:'📍 المملكة العربية السعودية · 2014 – 2019',en:'📍 Saudi Arabia · 2014 – 2019'},
+  'pd3':{ar:'العمل ضمن فريق GIS لمشروع البريد السعودي – رقمنة البيانات الجغرافية وإدخالها ضمن منظومة المعلومات الجغرافية.',en:'Working within the GIS team for the Saudi Post project – digitizing geographic data into the GIS system.'},
+  'pt4':{ar:'🗺️ رفع مساحي',en:'🗺️ Topographic Survey'},
+  'ptt4':{ar:'رفع قرى الفيوم والبدرشين والإسكندرية',en:'Survey of Fayoum, Badrashin & Alexandria Villages'},
+  'pl4':{ar:'📍 الفيوم · البدرشين · الإسكندرية · 2014 – 2019',en:'📍 Fayoum · Badrashin · Alexandria · 2014 – 2019'},
+  'pd4':{ar:'رفع مساحي ميداني شامل لمناطق متعددة باستخدام Total Station وGPS وإعداد المخططات الهندسية الدقيقة.',en:'Comprehensive field surveying across multiple areas using Total Station and GPS with precise engineering drawings.'},
+  'pt5':{ar:'📐 As-Built',en:'📐 As-Built'},
+  'ptt5':{ar:'مخططات As-Built – مشاريع FTTH',en:'As-Built Drawings – FTTH Projects'},
+  'pl5':{ar:'📍 الرياض · 2024 – الآن',en:'📍 Riyadh · 2024 – Present'},
+  'pd5':{ar:'إعداد مخططات As-Built النهائية لمشاريع الألياف الضوئية وتسليمها للاستشاريين وفق المواصفات المطلوبة.',en:'Preparing final As-Built drawings for fiber optic projects and delivering them to consultants per required specifications.'},
+  'tc0':{ar:'شركة الهاجدية للمقاولات المحدودة – الرياض',en:'Al-Hajidiyah Contracting Co. Ltd. – Riyadh'},
+  'tr0':{ar:'أخصائي مساحة ونظم معلومات جغرافية أول',en:'Senior Survey & GIS Specialist'},
+  'tli00':{ar:'مسح منطقة العمل الميدانية قبل بداية التنفيذ',en:'Field site survey before project start'},
+  'tli01':{ar:'إدارة حصر الكميات (حفر / فايبر) وحصر المواد المستحقة للمقاول',en:'Manage quantity takeoff (excavation/fiber) and contractor dues'},
+  'tli02':{ar:'تجهيز مخططات الحفر بـ Photoshop موضحًا كل الأمتار الميدانية',en:'Prepare excavation drawings in Photoshop with field measurements'},
+  'tli03':{ar:'إعداد محاضر إنجاز الأعمال حتى المطالبة النهائية للمقاول',en:'Prepare work progress reports up to final contractor claim'},
+  'tli04':{ar:'إعداد BOQ النهائي (حفر / فايبر) لتسليمه لضوئيات',en:'Prepare final BOQ (excavation/fiber) for handover to optics'},
+  'tli05':{ar:'التعديل على المخططات وتسليمها للاستشاري',en:'Revise drawings and deliver to consultant'},
+  'tli06':{ar:'تسليم الموقع من البداية حتى إنهاء جميع التقارير',en:'Site handover from start to final report completion'},
+  'tc1':{ar:'شركة مودرن جاس – مصر',en:'Modern Gas Company – Egypt'},
+  'tr1':{ar:'أخصائي مساحة',en:'Survey Specialist'},
+  'tli10':{ar:'رفع مساحي لقرى سوهاج – قنا – الشرقية – العلمين – الحمام (مشروع حياة كريمة)',en:'Surveying of Sohag – Qena – Sharqia – Alamein – Hamam villages (Decent Life project)'},
+  'tli11':{ar:'استخدام GPS في توقيع ورفع خطوط الغاز الطبيعي بالمناطق الصناعية',en:'Using GPS for natural gas pipeline staking and surveying in industrial zones'},
+  'tli12':{ar:'تصميم مسارات خطوط الغاز الطبيعي بالمناطق الصناعية بمحافظات متعددة',en:'Design of natural gas pipeline routes in industrial zones across multiple governorates'},
+  'tc2':{ar:'شركة باثفايندرز',en:'Pathfinders Company'},
+  'tr2':{ar:'أخصائي مساحة',en:'Survey Specialist'},
+  'tli20':{ar:'الرفع المساحي لقرى الفيوم – البدرشين – مناطق الإسكندرية',en:'Surveying of Fayoum – Badrashin – Alexandria areas'},
+  'tli21':{ar:'العمل في مشروع البريد السعودي في مجال GIS',en:'Working on Saudi Post project in GIS field'},
+  'tli22':{ar:'إدخال وتوثيق البيانات الجغرافية',en:'Geographic data entry and documentation'},
+};
+window.langMap=langMap;
+document.addEventListener('DOMContentLoaded',function(){
+  document.getElementById('langToggle').addEventListener('click',toggleLang);
+});
+
 // ══ INIT ══
 if(sessionStorage.getItem('isAdmin')==='true')showAdminPanel();
 initGallery();
 </script>
 </body>
 </html>
+
