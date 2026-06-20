@@ -267,7 +267,7 @@ footer strong{color:var(--gold);}
 
 <!-- NAV -->
 <nav>
-  <div class="nav-logo">م.م. خميس رمضان</div>
+  <div class="nav-logo" data-i18n="nav-logo">م.م. خميس رمضان</div>
   <button class="hamburger" id="hamburger" aria-label="القائمة">☰</button>
   <div class="nav-links" id="navLinks">
     <a href="#about" data-i18n="nav-about">عني</a>
@@ -287,7 +287,7 @@ footer strong{color:var(--gold);}
   <div class="hero-inner">
     <div class="avail-badge"><span class="avail-dot"></span><span data-i18n="hero-avail">متاح للعمل الآن</span></div>
     <div class="hero-badge" data-i18n="hero-badge">أخصائي مساحة ونظم معلومات جغرافية أول</div>
-    <h1>محمود مصطفى <span>خميس رمضان</span></h1>
+    <h1 data-i18n="hero-name">محمود مصطفى <span>خميس رمضان</span></h1>
     <p class="hero-subtitle" data-i18n="hero-subtitle">رفع مساحي · GIS · FTTH · خطوط الغاز · As-Built · BOQ</p>
     <div class="hero-years">
       <div class="hero-stat"><span class="num">+10</span><span class="lbl" data-i18n="stat-1">سنوات خبرة</span></div>
@@ -725,7 +725,7 @@ footer strong{color:var(--gold);}
 </div>
 
 <footer>
-  <strong>محمود مصطفى خميس رمضان</strong> · <span data-i18n="footer-text">أخصائي مساحة ونظم معلومات جغرافية · الرياض، المملكة العربية السعودية</span><br>
+  <strong data-i18n="footer-name">محمود مصطفى خميس رمضان</strong> · <span data-i18n="footer-text">أخصائي مساحة ونظم معلومات جغرافية · الرياض، المملكة العربية السعودية</span><br>
   <span style="font-size:.72rem;margin-top:6px;display:block;">+966 565627491 · mahmoudmoustafakhmies@gmail.com</span>
 </footer>
 
@@ -1110,9 +1110,9 @@ async function loadGitHubFiles(){
 }
 
 function initGallery(){
-  files=[];
   try{var cached=localStorage.getItem('fileCache');if(cached){files=JSON.parse(cached);renderGallery();}}catch(e){}
   loadGitHubFiles().then(()=>{
+    try{var cached2=localStorage.getItem('fileCache');if(cached2&&JSON.parse(cached2).length>=files.length){return;}}catch(e3){}
     nextId=files.length;
     renderGallery();
   });
@@ -1350,6 +1350,9 @@ const langMap={
   'tt0':{ar:'يناير 2024<br>– الآن',en:'January 2024<br>– Present'},
   'tt1':{ar:'أغسطس 2019<br>– ديسمبر 2023',en:'August 2019<br>– December 2023'},
   'tt2':{ar:'فبراير 2014<br>– يوليو 2019',en:'February 2014<br>– July 2019'},
+  'nav-logo':{ar:'م.م. خميس رمضان',en:'M.M. Khamis Ramadan'},
+  'hero-name':{ar:'محمود مصطفى <span>خميس رمضان</span>',en:'Mahmoud Moustafa <span>Khamis Ramadan</span>'},
+  'footer-name':{ar:'محمود مصطفى خميس رمضان',en:'Mahmoud Moustafa Khamis Ramadan'},
 };
 window.langMap=langMap;
 document.addEventListener('DOMContentLoaded',function(){
