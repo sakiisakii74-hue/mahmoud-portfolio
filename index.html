@@ -1075,19 +1075,18 @@ async function deleteFile(id){
     const c=await ghFetch(GH_API+'/repos/'+GH_OWNER+'/'+GH_REPO+'/git/commits',{method:'POST',headers:ghHeaders(),body:JSON.stringify({message:'Delete '+f.name,tree:nt2.sha,parents:[ref.object.sha]})});
     const cm=await c.json();
     await ghFetch(GH_API+'/repos/'+GH_OWNER+'/'+GH_REPO+'/git/refs/heads/'+GH_BRANCH,{method:'PATCH',headers:ghHeaders(),body:JSON.stringify({sha:cm.sha,force:true})});
-    const fi=files.findIndex(x=>x.id===id);if(fi>-1)files.splice(fi,1);
+    files=files.filter(x=>x.path!==f.path);
     status.textContent='🗵️ تم حذف الملف';
     renderGallery();
   }catch(e){
     status.textContent='⚠ '+e.message;
-    initGallery();
   }
 }
 
 // ══ LOAD FILES from GitHub tree ══
 async function loadGitHubFiles(){
   try{
-    const r=await fetch('https://api.github.com/repos/'+GH_OWNER+'/'+GH_REPO+'/git/trees/HEAD?recursive=1',{headers:{Accept:'application/vnd.github.v3+json'}});
+    const r=await fetch('https://api.github.com/repos/'+GH_OWNER+'/'+GH_REPO+'/git/trees/HEAD?recursive=1&t='+Date.now(),{headers:{Accept:'application/vnd.github.v3+json'}});
     if(!r.ok)return;
     const tree=await r.json();
     const items=tree.tree.filter(e=>e.path.startsWith('uploads/')&&e.type==='blob');
