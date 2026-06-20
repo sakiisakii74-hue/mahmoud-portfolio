@@ -1024,6 +1024,7 @@ async function adminUpload(){
       const url='https://raw.githubusercontent.com/'+GH_OWNER+'/'+GH_REPO+'/'+GH_BRANCH+'/'+u.path;
       files.push({id,name:u.name,ext:u.ext,category:cat,size:u.size||0,url,caption:u.name,isImage:cat==='image',uploaded:true,path:u.path});
     });
+    try{localStorage.setItem('fileCache',JSON.stringify(files));}catch(e2){}
     renderGallery();
   }catch(e){
     status.textContent='⚠ '+e.message;
@@ -1076,7 +1077,7 @@ async function deleteFile(id){
     const cm=await c.json();
     await ghFetch(GH_API+'/repos/'+GH_OWNER+'/'+GH_REPO+'/git/refs/heads/'+GH_BRANCH,{method:'PATCH',headers:ghHeaders(),body:JSON.stringify({sha:cm.sha,force:true})});
     files=files.filter(x=>x.path!==f.path);
-    try{var dl=JSON.parse(localStorage.getItem('deletedFiles')||'[]');dl.push(f.path);localStorage.setItem('deletedFiles',JSON.stringify(dl));}catch(e1){}
+    try{localStorage.setItem('fileCache',JSON.stringify(files));}catch(e1){}
     status.textContent='🗵️ تم حذف الملف';
     renderGallery();
   }catch(e){
@@ -1087,11 +1088,10 @@ async function deleteFile(id){
 // ══ LOAD FILES from GitHub tree ══
 async function loadGitHubFiles(){
   try{
-    var deletedList=[];try{deletedList=JSON.parse(localStorage.getItem('deletedFiles')||'[]');}catch(e3){}
     const r=await fetch('https://api.github.com/repos/'+GH_OWNER+'/'+GH_REPO+'/git/trees/HEAD?recursive=1&t='+Date.now(),{headers:{Accept:'application/vnd.github.v3+json'}});
     if(!r.ok)return;
     const tree=await r.json();
-    const items=tree.tree.filter(e=>e.path.startsWith('uploads/')&&e.type==='blob'&&!deletedList.includes(e.path));
+    const items=tree.tree.filter(e=>e.path.startsWith('uploads/')&&e.type==='blob');
     let meta={};
     try{const mr=await fetch('https://raw.githubusercontent.com/'+GH_OWNER+'/'+GH_REPO+'/'+GH_BRANCH+'/files-index.json?t='+Date.now());if(mr.ok){const mi=await mr.json();mi.forEach(x=>{meta[x.path]=x;});}}catch(e){}
     items.forEach((item,i)=>{
@@ -1103,19 +1103,13 @@ async function loadGitHubFiles(){
       const url='https://raw.githubusercontent.com/'+GH_OWNER+'/'+GH_REPO+'/'+GH_BRANCH+'/'+item.path;
       files.push({id,name:origName,ext,category:cat,size:meta[item.path]?.size||0,url,caption:origName,isImage:cat==='image',uploaded:true,path:item.path});
     });
+    try{localStorage.setItem('fileCache',JSON.stringify(files));}catch(e2){}
   }catch(e){}
 }
 
 function initGallery(){
   files=[];
-  if(typeof galleryData!=='undefined'){
-    galleryData.forEach((item,i)=>{
-      const ext=item.url.split('.').pop().toLowerCase();
-      const cat=getCat(ext);
-      const isImage=cat==='image';
-      files.push({id:i,name:item.url.split('/').pop(),ext,category:cat,size:0,url:item.url,caption:item.caption||'',isImage});
-    });
-  }
+  try{var cached=localStorage.getItem('fileCache');if(cached){files=JSON.parse(cached);renderGallery();}}catch(e){}
   loadGitHubFiles().then(()=>{
     nextId=files.length;
     renderGallery();
