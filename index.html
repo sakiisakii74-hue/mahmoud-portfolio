@@ -889,7 +889,7 @@ document.getElementById('loginForm').addEventListener('submit',function(e){
   e.preventDefault();
   const u=document.getElementById('loginUser').value.trim();
   const p=document.getElementById('loginPass').value.trim();
-  const t=document.getElementById('loginToken').value.trim();
+  const t=document.getElementById('loginToken').value.replace(/[^\x20-\x7E]/g,'').trim();
   if(u===ADMIN_USER && p===ADMIN_PASS && t){
     sessionStorage.setItem('isAdmin','true');
     sessionStorage.setItem('ghToken',t);
